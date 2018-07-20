@@ -1,44 +1,13 @@
-package main
+package load
 
 import (
-	"time"
 	"fmt"
 	"net/http"
+	"time"
+	"strconv"
 	"io/ioutil"
 	"encoding/json"
-	"strconv"
 )
-
-func main() {
-
-	//tick := time.Tick(time.Hour)
-
-	//select {
-	//case <-tick:
-	//	fmt.Printf("hello, world\n%v %T", time.Now(), time.Now())
-	//}
-
-	loadCatalog()
-
-	/*
-
-
-	var hoursUpdate = []int{9, 12, 16, 17, 18}
-
-	for {
-		now := time.Now()
-
-		for _, v := range hoursUpdate {
-			if v == now.Hour() {
-				loadCatalog()
-				break
-			}
-		}
-
-		time.Sleep(time.Hour)
-	}
-	*/
-}
 
 var (
 	headers = map[string]string{
@@ -58,32 +27,8 @@ type JsonObject struct {
 	Html   string      `json:"html"`
 }
 
-func loadCatalog() {
-	//fmt.Printf("WORK")
-	//var sprockets SprocketsResponse
-
-	//response, err := netClient.Get("https://facebook.github.io/react-native/movies.json")
-
-	//firstJson := fetchCatalog(0)
-	//var html = firstJson.Html
-	//lastProductIndex := firstJson.LastProductIndex
-	//var countOfRequest = int(math.Round(float64(firstJson.FilteredProductsCount)/float64(lastProductIndex)))
-	//const countItemInRequest  =
-	//for i := 0; i < countOfRequest; i++ {
-	//
-	//}
-
-
-	//fmt.Println(string(buf))
-
-	//json.Unmarshal(buf, &res)
-	//str := `{"title": "sdsd", "description": "sdd"}`
-
-	//fmt.Println(jsonObj.LastProductIndex, resp.StatusCode, http.StatusText(resp.StatusCode))
-
-	lastProductIndex := 0
-
-	var html = ""
+func Catalog() string {
+	var lastProductIndex, html = 0, ""
 
 	for {
 		fmt.Println("Fetch offset %v", lastProductIndex)
@@ -97,18 +42,7 @@ func loadCatalog() {
 		}
 	}
 
-	parsingCatalog(html)
-
-	//fmt.Println(headers["Cookie"])
-
-
-	//if (json.)
-	//fmt.Println(json)
-	//for {
-	//
-	//}
-
-
+	return html
 }
 
 func fetchCatalog (offset int)  JsonObject {
@@ -130,31 +64,6 @@ func fetchCatalog (offset int)  JsonObject {
 	buf, _ := ioutil.ReadAll(resp.Body)
 	jsonObj := JsonObject{}
 	json.Unmarshal(buf, &jsonObj)
-	//fmt.Println(string(buf))
 	return jsonObj
 }
 
-func parsingCatalog(html string)  {
-	//fmt.Println(html)
-}
-
-func analyzeData()  {
-	//var createItem, updateItem = make([]Item), make([]Item)
-
-}
-
-func getDataFromDB()  {
-	
-}
-
-func setDateInDB()  {
-
-}
-
-func updateDataInDB()  {
-
-}
-
-func sendTelegramMessage()  {
-
-}
