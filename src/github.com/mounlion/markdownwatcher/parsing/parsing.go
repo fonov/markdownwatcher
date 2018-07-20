@@ -8,8 +8,12 @@ import (
 )
 
 type Item struct {
-	title, url, itemId, desc string
-	price, oldPrice int
+	ItemId string
+	Title string
+	Desc string
+	Url string
+	Price int
+	OldPrice int
 }
 
 func Catalog(rawHtml string) []Item {
@@ -49,7 +53,7 @@ func Catalog(rawHtml string) []Item {
 				for _, val := range t.Attr {
 					switch {
 					case val.Key == "data-id" && val.Val == "product":
-						if len(tempItem.title) >  0 {
+						if len(tempItem.Title) >  0 {
 							Items = append(Items, tempItem)
 							tempItem = Item{}
 						}
@@ -64,7 +68,7 @@ func Catalog(rawHtml string) []Item {
 					}
 				}
 			case "a":
-				if len(tempItem.url) > 0 { break }
+				if len(tempItem.Url) > 0 { break }
 				const className = "ec-price-item-link"
 				var href string
 				isNeedClass := false
@@ -78,9 +82,9 @@ func Catalog(rawHtml string) []Item {
 					if isNeedClass && len(href) > 0 { break }
 				}
 				if isNeedClass {
-					tempItem.url = href
+					tempItem.Url = href
 					url := strings.Split(href, "/")
-					tempItem.itemId = url[3]
+					tempItem.ItemId = url[3]
 				}
 			case "span":
 				for _, val := range t.Attr {
@@ -95,20 +99,20 @@ func Catalog(rawHtml string) []Item {
 		case tt == html.TextToken:
 			if lastClass[0] == "item-desc" && lastClass[1] == "small-screens" && lastClass[2] == "ec-price-item-link" {
 				t := z.Token()
-				tempItem.desc = t.Data
+				tempItem.Desc = t.Data
 			}
 			if isWaitText {
 				t := z.Token()
 				switch typeOfWaitData {
 				case 1:
-					tempItem.title = t.Data
+					tempItem.Title = t.Data
 					break
 				case 2:
 					price, err := strconv.Atoi(strings.Replace(t.Data, ` `, "", -1))
 					if err != nil {
 						fmt.Println(err)
 					}
-					tempItem.price = price
+					tempItem.Price = price
 					break
 				case 3:
 					str := strings.Replace(t.Data, "\u00a0", "", -1)
@@ -116,7 +120,7 @@ func Catalog(rawHtml string) []Item {
 					if err != nil {
 						fmt.Println(err)
 					}
-					tempItem.oldPrice = oldPrice
+					tempItem.OldPrice = oldPrice
 					break
 				}
 				isWaitText = false

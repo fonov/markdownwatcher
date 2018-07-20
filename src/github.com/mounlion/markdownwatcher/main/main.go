@@ -2,9 +2,8 @@ package main
 
 import (
 	"time"
-	"github.com/mounlion/markdownwatcher/load"
-	"github.com/mounlion/markdownwatcher/parsing"
 	"fmt"
+	"github.com/mounlion/markdownwatcher/parsing"
 )
 
 var (
@@ -17,9 +16,13 @@ func main() {
 		now := time.Now()
 		for _, v := range hoursUpdate {
 			if v == now.Hour() {
-				html := load.Catalog()
-				catalog := parsing.Catalog(html)
-				fmt.Println(catalog)
+				//html := load.Catalog()
+				//catalog := parsing.Catalog(html)
+
+				//var Items []parsing.Item
+				//Items = append(Items, parsing.Item{"Title", "Url", "sha256", "2222", 12, 1200})
+
+				fmt.Println(parsing.Item{})
 				break
 			}
 		}
