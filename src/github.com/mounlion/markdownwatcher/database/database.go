@@ -28,7 +28,7 @@ func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
 	// возврашаем новые и обновленные оъеты
 
 	db, err := sql.Open("sqlite3", "./MarkDownWatcher.db")
-	checkErr(err)
+	CheckErr(err)
 	defer db.Close()
 
 	sqlStr := "select id, price from items where id in ("
@@ -57,7 +57,7 @@ func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
 
 	for rows.Next() {
 		err = rows.Scan(&id, &price)
-		checkErr(err)
+		CheckErr(err)
 		catalogsData = append(catalogsData, CatalogData{id, price})
 	}
 
@@ -138,7 +138,7 @@ func NullInt(i int) sql.NullInt64 {
 	}
 }
 
-func checkErr(err error) {
+func CheckErr(err error) {
 	if err != nil {
 		panic(err)
 	}

@@ -2,10 +2,10 @@ package main
 
 import (
 	"time"
-	"fmt"
 	"github.com/mounlion/markdownwatcher/parsing"
 	"github.com/mounlion/markdownwatcher/load"
 	"github.com/mounlion/markdownwatcher/database"
+	"github.com/mounlion/markdownwatcher/bot"
 )
 
 var (
@@ -21,7 +21,7 @@ func main() {
 				html := load.Catalog()
 				catalog := parsing.Catalog(html)
 				newItems, updateItems := database.PrepareItems(catalog)
-				fmt.Println(newItems, updateItems)
+				bot.SendMessage(newItems, updateItems)
 				break
 			}
 		}
