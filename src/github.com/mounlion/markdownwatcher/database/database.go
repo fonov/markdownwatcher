@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	_ "github.com/mattn/go-sqlite3"
@@ -8,113 +8,134 @@ import (
 )
 
 
-func main ()  {
+func main () {
 	var Items []parsing.Item
 	Items = append(Items, parsing.Item{"Title", "Url", "sha256", "2222", 12, 1200})
 
 	PrepareItems(Items)
 }
 
-func PrepareItems(items []parsing.Item)  {
+type CatalogData struct {
+	Id string
+	Price int
+}
+
+func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
 	// получить список объектов по идексам в воде мы должны получит массив объектов ид цена
 	// расчитывем какие новые а какие обновленные
 	// insert новые объекты
 	// update объекты для обновление
 	// возврашаем новые и обновленные оъеты
 
-	db, err := sql.Open("sqlite3", "./catalog.db")
+	db, err := sql.Open("sqlite3", "./MarkDownWatcher.db")
 	checkErr(err)
 	defer db.Close()
 
-	sqlStr := "select id, price from items when id in"
-	var searchIDs string
+	sqlStr := "select id, price from items where id in ("
 
-	for _, val := range items {
-		searchIDs += val.ItemId
+	for i, val := range items {
+		sqlStr += `"`+val.ItemId+`"`
+		if len(items)-1 != i {
+			sqlStr += ","
+		} else {
+			sqlStr += ")"
+		}
 	}
-
-	sqlStr += "["+searchIDs+"]"
 
 	rows, err := db.Query(sqlStr)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil {log.Fatal(err)}
+	defer rows.Close()
 
 	var (
 		id string
 		price int
-		updateItems []*parsing.Item
-		newItems []*parsing.Item
+		catalogsData []CatalogData
+		updateItems []parsing.Item
+		newItems []parsing.Item
+		isFirstRun = false
 	)
 
 	for rows.Next() {
 		err = rows.Scan(&id, &price)
 		checkErr(err)
+		catalogsData = append(catalogsData, CatalogData{id, price})
+	}
+
+	if len(catalogsData) > 0 {
 		for _, val := range items {
-			if val.ItemId == id && val.Price != price {
-				updateItems = append(updateItems, &val)
-				break
+			isNewItem := true
+			for _, dbVal := range catalogsData {
+				if val.ItemId == dbVal.Id && val.Price == dbVal.Price {
+					isNewItem = false
+					break
+				}
+				if val.ItemId == dbVal.Id && val.Price != dbVal.Price {
+					isNewItem = false
+					updateItems = append(updateItems, val)
+					break
+				}
 			}
-			if val.ItemId == id && val.Price == price { break }
 
-			newItems = append(newItems, &val)
+			if isNewItem {
+				newItems = append(newItems, val)
+			}
 		}
+	} else {
+		isFirstRun = true
+		newItems = items
 	}
 
-	rows.Close()
+	if len(newItems) > 0 || len(updateItems) > 0 {
+		tx, err := db.Begin()
+		if err != nil {log.Fatal(err)}
 
-	insertStr := "INSERT INTO items(id, title, url, description, price, oldPrice) values "
-	var insertVals string
-	var insertData 
+		if len(newItems) > 0 {
+			stmt, err := tx.Prepare("INSERT OR IGNORE INTO items(id, title, url, description, price, oldPrice) values (?,?,?,?,?,?)")
+			if err != nil {log.Fatal(err)}
+			defer stmt.Close()
+			for _, item := range newItems {
+				_, err = stmt.Exec(item.ItemId, item.Title, item.Url, NullString(item.Desc), item.Price, NullInt(item.OldPrice))
+				if err != nil {log.Fatal(err)}
+			}
+		}
+		if len(updateItems) > 0 {
+			stmt, err := tx.Prepare("UPDATE items set price=? where id=?")
+			if err != nil {log.Fatal(err)}
+			defer stmt.Close()
+			for _, item := range newItems {
+				_, err = stmt.Exec(item.Price, item.ItemId)
+				if err != nil {log.Fatal(err)}
+			}
+		}
 
-	for _, val := range newItems {
-		insertVals += "(?,?,?,?,?,?),"
+		tx.Commit()
 	}
 
-	//rows, err := db.Query("CREATE TABLE family1 (member_id INT NOT NULL, name VARCHAR(50), relation VARCHAR(50));")
+	if isFirstRun {
+		return []parsing.Item{}, []parsing.Item{}
+	} else {
+		return newItems, updateItems
+	}
+}
 
-	//checkErr(err)
+func NullString(s string) sql.NullString {
+	if len(s) == 0 {
+		return sql.NullString{}
+	}
+	return sql.NullString{
+		String: s,
+		Valid: true,
+	}
+}
 
-	//fmt.Println(rows)
-
-	//db.Close()
-
-	//sqlStr := "INSERT INTO items(id, title, url, description, price, oldPrice) values (?,?,?,?,?,?)"
-	//vals := []interface{}{}
-	//
-	//items[0].title
-	//
-	//var item parsing.Item
-	//
-	//for _, row := range items {
-	//	item = row
-	//
-	//	sqlStr += " (?,?,?,?,?,?),"
-	//	//row.
-	//	vals = append(vals, item.tile)
-	//}
-	////trim the last ,
-	//sqlStr = sqlStr[0:len(sqlStr)-2]
-	////prepare the statement
-	//stmt, _ := db.Prepare(sqlStr)
-	//
-	////format all vals at once
-	//res, _ := stmt.Exec(vals...)
-	//
-	//
-	//db, err := sql.Open("sqlite3", "./catalog.db")
-	//checkErr(err)
-	//
-	//defer db.Close()
-	//
-	stmt, err := db.Prepare("INSERT INTO items(id, title, url, description, price, oldPrice) values(?,?,?,?,?,?)")
-	//checkErr(err)
-	//
-	//res, err := stmt.Exec()
-	//checkErr(err)
-	//
-	//id, err := res.LastInsertId()
-	//checkErr(err)
+func NullInt(i int) sql.NullInt64 {
+	if i == 0 {
+		return sql.NullInt64{}
+	}
+	return sql.NullInt64{
+		Int64: int64(i),
+		Valid: true,
+	}
 }
 
 func checkErr(err error) {
