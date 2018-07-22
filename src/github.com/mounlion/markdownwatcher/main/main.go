@@ -14,6 +14,9 @@ var (
 
 
 func main() {
+
+	bot.Front()
+
 	for {
 		now := time.Now()
 		for _, v := range hoursUpdate {

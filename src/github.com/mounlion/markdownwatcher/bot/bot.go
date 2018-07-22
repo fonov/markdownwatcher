@@ -3,7 +3,6 @@ package bot
 import (
 	"github.com/mounlion/markdownwatcher/parsing"
 	"fmt"
-	"database/sql"
 	"github.com/mounlion/markdownwatcher/database"
 	"gopkg.in/telegram-bot-api.v4"
 	"log"
@@ -11,19 +10,8 @@ import (
 
 const DNSDomain = "https://www.dns-shop.ru"
 
-func main ()  {
-
-}
-
 func SendMessage(newItems []parsing.Item, updateItems[]parsing.Item)  {
 	if len(newItems) > 0 || len(updateItems) > 0 {
-		db, err := sql.Open("sqlite3", "./MarkDownWatcher.db")
-		database.CheckErr(err)
-		defer db.Close()
-
-		rows, err := db.Query("SELECT id from users when isActive=?", true)
-
-		var id int64
 
 		var (
 			newItemsString string
@@ -40,26 +28,25 @@ func SendMessage(newItems []parsing.Item, updateItems[]parsing.Item)  {
 			updateItemsString += CatalogMessage(updateItems)
 		}
 
-		bot, err := tgbotapi.NewBotAPI("***REMOVED***")
+		bot, err := tgbotapi.NewBotAPI(botToken)
 		if err != nil {
 			log.Panic(err)
 		}
 
-		for rows.Next() {
-			err = rows.Scan(&id)
-			database.CheckErr(err)
+		users := database.GetUsers()
 
-			if len(newItemsString) > 0 {
-				msg := tgbotapi.NewMessage(id, newItemsString)
-				bot.Send(msg)
-			}
-			if len(updateItemsString) > 0 {
-				msg := tgbotapi.NewMessage(id, updateItemsString)
-				bot.Send(msg)
+		for _, user := range users {
+			if user.IsActive {
+				if len(newItemsString) > 0 {
+					msg := tgbotapi.NewMessage(user.Id, newItemsString)
+					bot.Send(msg)
+				}
+				if len(updateItemsString) > 0 {
+					msg := tgbotapi.NewMessage(user.Id, updateItemsString)
+					bot.Send(msg)
+				}
 			}
 		}
-
-		rows.Close()
 	}
 }
 

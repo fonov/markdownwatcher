@@ -1,27 +1,23 @@
-package main
+package bot
 
 import (
 	"gopkg.in/telegram-bot-api.v4"
 	"log"
-	"fmt"
+	"github.com/mounlion/markdownwatcher/database"
 )
 
 const (
+	botToken = "***REMOVED***"
 	start = "Подписка оформлена"
+	stop = "Подписка отмена"
+	otherwise = "Введена неправильная команда"
 )
 
-func main() {
-
-	fmt.Println("*****")
-
-	bot, err := tgbotapi.NewBotAPI("***REMOVED***")
+func Front() {
+	bot, err := tgbotapi.NewBotAPI(botToken)
 	if err != nil {
 		log.Panic(err)
 	}
-
-	bot.Debug = true
-
-	log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
@@ -32,21 +28,17 @@ func main() {
 		if update.Message == nil {
 			continue
 		}
-
-		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
 		switch update.Message.Text {
 		case "/start":
-
-			// Same logic db
-
+			database.Subscribe(update.Message.From.ID, true)
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, start)
-
+			bot.Send(msg)
+		case "/stop":
+			database.Subscribe(update.Message.From.ID, false)
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, stop)
 			bot.Send(msg)
 		default:
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-			msg.ReplyToMessageID = update.Message.MessageID
-
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, otherwise)
 			bot.Send(msg)
 		}
 	}
