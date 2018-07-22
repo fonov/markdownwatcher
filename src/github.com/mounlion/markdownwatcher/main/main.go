@@ -14,8 +14,7 @@ var (
 
 
 func main() {
-
-	bot.Front()
+	go bot.Front()
 
 	for {
 		now := time.Now()

@@ -33,11 +33,11 @@ func Catalog() string {
 	for {
 		fmt.Println("Fetch offset %v", lastProductIndex)
 		result := fetchCatalog(lastProductIndex)
+		html += result.Html
 		if result.IsNextLoadAvailable {
 			lastProductIndex = result.LastProductIndex
-			html += result.Html
 		} else {
-			fmt.Println("All fetch end %v", len(html))
+			fmt.Println("All fetch end")
 			break
 		}
 	}

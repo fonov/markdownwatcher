@@ -39,11 +39,21 @@ func SendMessage(newItems []parsing.Item, updateItems[]parsing.Item)  {
 			if user.IsActive {
 				if len(newItemsString) > 0 {
 					msg := tgbotapi.NewMessage(user.Id, newItemsString)
-					bot.Send(msg)
+					msg.ParseMode = "HTML"
+					msg.DisableWebPagePreview = true
+					_, err := bot.Send(msg)
+					if err != nil {
+						fmt.Println(err)
+					}
 				}
 				if len(updateItemsString) > 0 {
 					msg := tgbotapi.NewMessage(user.Id, updateItemsString)
-					bot.Send(msg)
+					msg.ParseMode = "HTML"
+					msg.DisableWebPagePreview = true
+					_, err := bot.Send(msg)
+					if err != nil {
+						fmt.Println(err)
+					}
 				}
 			}
 		}
@@ -55,9 +65,9 @@ func CatalogMessage(items []parsing.Item) string {
 
 	for _, val := range items {
 		catalog += fmt.Sprintf("<a href=\"%s%s\">%s</a>\n", DNSDomain, val.Url, val.Title)
-		catalog += fmt.Sprintf("<b>%d</b>", val.Price)
+		catalog += fmt.Sprintf("<b>%d₽</b>", val.Price)
 		if val.OldPrice != 0 {
-			catalog += fmt.Sprintf(" <code>%d</code>", val.OldPrice)
+			catalog += fmt.Sprintf("    <code>%d₽</code>", val.OldPrice)
 		}
 		if len(val.Desc) > 0 {
 			catalog += fmt.Sprintf("<i>%s</i>", val.Desc)
