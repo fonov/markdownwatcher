@@ -60,6 +60,26 @@ func SendMessage(newItems []parsing.Item, updateItems[]parsing.Item)  {
 	}
 }
 
+func SendServiceMessage(text string)  {
+	users := database.GetUsers()
+
+	bot, err := tgbotapi.NewBotAPI(botToken)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	for _, user := range users {
+		if user.IsActive && user.IsAdmin {
+			msg := tgbotapi.NewMessage(user.Id, text)
+			msg.ParseMode = "HTML"
+			_, err := bot.Send(msg)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}
+}
+
 func CatalogMessage(items []parsing.Item) string {
 	var catalog string
 

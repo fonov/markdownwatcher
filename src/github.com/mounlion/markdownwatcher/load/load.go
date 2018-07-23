@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"io/ioutil"
 	"encoding/json"
+	"github.com/mounlion/markdownwatcher/bot"
 )
 
 var (
@@ -32,7 +33,13 @@ func Catalog() string {
 
 	for {
 		fmt.Println("Fetch offset %v", lastProductIndex)
-		result := fetchCatalog(lastProductIndex)
+		result, statusCode := fetchCatalog(lastProductIndex)
+		if statusCode != 200 {
+			fmt.Println("Fetch failed. Status code: ", statusCode)
+			message := fmt.Sprintf("<b>Обнаружена проблема</b>\n\nСтатус ответа сервера: <code>%d</code>", statusCode)
+			bot.SendServiceMessage(message)
+			break
+		}
 		html += result.Html
 		if result.IsNextLoadAvailable {
 			lastProductIndex = result.LastProductIndex
@@ -45,7 +52,7 @@ func Catalog() string {
 	return html
 }
 
-func fetchCatalog (offset int)  JsonObject {
+func fetchCatalog (offset int)  (JsonObject, int)  {
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -63,7 +70,11 @@ func fetchCatalog (offset int)  JsonObject {
 	}
 	buf, _ := ioutil.ReadAll(resp.Body)
 	jsonObj := JsonObject{}
-	json.Unmarshal(buf, &jsonObj)
-	return jsonObj
+	if resp.StatusCode == 200 {
+		json.Unmarshal(buf, &jsonObj)
+		return jsonObj, resp.StatusCode
+	} else {
+		return jsonObj, resp.StatusCode
+	}
 }
 
