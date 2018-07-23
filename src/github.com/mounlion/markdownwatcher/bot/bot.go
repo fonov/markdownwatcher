@@ -10,7 +10,7 @@ import (
 
 const DNSDomain = "https://www.dns-shop.ru"
 
-func SendMessage(newItems []parsing.Item, updateItems[]parsing.Item)  {
+func SendCatalog(newItems []parsing.Item, updateItems[]parsing.Item)  {
 	if len(newItems) > 0 || len(updateItems) > 0 {
 
 		var (
@@ -38,24 +38,24 @@ func SendMessage(newItems []parsing.Item, updateItems[]parsing.Item)  {
 		for _, user := range users {
 			if user.IsActive {
 				if len(newItemsString) > 0 {
-					msg := tgbotapi.NewMessage(user.Id, newItemsString)
-					msg.ParseMode = "HTML"
-					msg.DisableWebPagePreview = true
-					_, err := bot.Send(msg)
-					if err != nil {
-						fmt.Println(err)
-					}
+					sendCatalogMessage(bot, &user, &newItemsString)
 				}
 				if len(updateItemsString) > 0 {
-					msg := tgbotapi.NewMessage(user.Id, updateItemsString)
-					msg.ParseMode = "HTML"
-					msg.DisableWebPagePreview = true
-					_, err := bot.Send(msg)
-					if err != nil {
-						fmt.Println(err)
-					}
+					sendCatalogMessage(bot, &user, &updateItemsString)
 				}
 			}
+		}
+	}
+}
+
+func sendCatalogMessage(bot *tgbotapi.BotAPI, user *database.User, message *string)  {
+	msg := tgbotapi.NewMessage(user.Id, *message)
+	msg.ParseMode = "HTML"
+	msg.DisableWebPagePreview = true
+	_, err := bot.Send(msg)
+	if err != nil {
+		if err.Error() == "Forbidden: bot was blocked by the user" {
+			database.Subscribe(int(user.Id), false)
 		}
 	}
 }
@@ -73,8 +73,8 @@ func SendServiceMessage(text string)  {
 			msg := tgbotapi.NewMessage(user.Id, text)
 			msg.ParseMode = "HTML"
 			_, err := bot.Send(msg)
-			if err != nil {
-				fmt.Println(err)
+			if err.Error() == "Forbidden: bot was blocked by the user" {
+				database.Subscribe(int(user.Id), false)
 			}
 		}
 	}

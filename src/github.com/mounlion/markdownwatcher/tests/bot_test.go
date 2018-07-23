@@ -36,5 +36,5 @@ func TestSendMessage(t *testing.T) {
 		},
 	}
 
-	bot.SendMessage(newItems, updateItems)
+	bot.SendCatalog(newItems, updateItems)
 }

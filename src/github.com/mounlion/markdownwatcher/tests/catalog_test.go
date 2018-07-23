@@ -19,5 +19,5 @@ func TestPrepareCatalog(t *testing.T) {
 
 	fmt.Println(newItems, updateItems)
 
-	bot.SendMessage(newItems, updateItems)
+	bot.SendCatalog(newItems, updateItems)
 }

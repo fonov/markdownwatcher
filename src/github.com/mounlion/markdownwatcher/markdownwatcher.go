@@ -23,7 +23,7 @@ func main() {
 				html := load.Catalog()
 				catalog := parsing.Catalog(html)
 				newItems, updateItems := database.PrepareItems(catalog)
-				bot.SendMessage(newItems, updateItems)
+				bot.SendCatalog(newItems, updateItems)
 				break
 			}
 		}
