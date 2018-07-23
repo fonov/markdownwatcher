@@ -21,6 +21,7 @@ func main() {
 		for _, v := range hoursUpdate {
 			if v == now.Hour() {
 				html := load.Catalog()
+				if len(html) == 0 { break }
 				catalog := parsing.Catalog(html)
 				newItems, updateItems := database.PrepareItems(catalog)
 				bot.SendCatalog(newItems, updateItems)

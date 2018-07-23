@@ -73,8 +73,10 @@ func SendServiceMessage(text string)  {
 			msg := tgbotapi.NewMessage(user.Id, text)
 			msg.ParseMode = "HTML"
 			_, err := bot.Send(msg)
-			if err.Error() == "Forbidden: bot was blocked by the user" {
-				database.Subscribe(int(user.Id), false)
+			if err != nil {
+				if err.Error() == "Forbidden: bot was blocked by the user" {
+					database.Subscribe(int(user.Id), false)
+				}
 			}
 		}
 	}
