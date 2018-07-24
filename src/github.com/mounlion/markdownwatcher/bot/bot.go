@@ -9,6 +9,11 @@ import (
 )
 
 const DNSDomain = "https://www.dns-shop.ru"
+var BotToken *string
+
+func SetBotToken(value *string)  {
+	BotToken = value
+}
 
 func SendCatalog(newItems []parsing.Item, updateItems[]parsing.Item)  {
 	if len(newItems) > 0 || len(updateItems) > 0 {
@@ -28,7 +33,7 @@ func SendCatalog(newItems []parsing.Item, updateItems[]parsing.Item)  {
 			updateItemsString += CatalogMessage(updateItems)
 		}
 
-		bot, err := tgbotapi.NewBotAPI(botToken)
+		bot, err := tgbotapi.NewBotAPI(*BotToken)
 		if err != nil {
 			log.Panic(err)
 		}
@@ -63,7 +68,7 @@ func sendCatalogMessage(bot *tgbotapi.BotAPI, user *database.User, message *stri
 func SendServiceMessage(text string)  {
 	users := database.GetUsers()
 
-	bot, err := tgbotapi.NewBotAPI(botToken)
+	bot, err := tgbotapi.NewBotAPI(*BotToken)
 	if err != nil {
 		log.Panic(err)
 	}

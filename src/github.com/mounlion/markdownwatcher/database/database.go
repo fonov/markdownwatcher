@@ -7,10 +7,14 @@ import (
 	"log"
 )
 
-var DataSourceName = "/home/fonov/markdownwatcher/MarkDownWatcher.db"
+var DataSourceName *string
+
+func SetDataSourceName(value *string) {
+	DataSourceName = value
+}
 
 func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
-	db, err := sql.Open("sqlite3", DataSourceName)
+	db, err := sql.Open("sqlite3", *DataSourceName)
 	CheckErr(err)
 	defer db.Close()
 
@@ -93,7 +97,7 @@ type User struct {
 }
 
 func GetUsers() []User {
-	db, err := sql.Open("sqlite3", DataSourceName)
+	db, err := sql.Open("sqlite3", *DataSourceName)
 	CheckErr(err)
 	defer db.Close()
 
@@ -118,7 +122,7 @@ func GetUsers() []User {
 }
 
 func Subscribe(userId int, isActive bool) {
-	db, err := sql.Open("sqlite3", DataSourceName)
+	db, err := sql.Open("sqlite3", *DataSourceName)
 	CheckErr(err)
 	defer db.Close()
 

@@ -7,14 +7,13 @@ import (
 )
 
 const (
-	botToken = "***REMOVED***"
 	start = "Подписка оформлена"
 	stop = "Подписка отмена"
 	otherwise = "Введена неправильная команда"
 )
 
-func Front() {
-	bot, err := tgbotapi.NewBotAPI(botToken)
+func Front(BotToken string) {
+	bot, err := tgbotapi.NewBotAPI(BotToken)
 	if err != nil {
 		log.Panic(err)
 	}
