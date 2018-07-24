@@ -7,9 +7,7 @@ import (
 	"log"
 )
 
-const (
-	DataSourceName = "./MarkDownWatcher.db"
-)
+var DataSourceName = "/home/fonov/markdownwatcher/MarkDownWatcher.db"
 
 func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
 	db, err := sql.Open("sqlite3", DataSourceName)
