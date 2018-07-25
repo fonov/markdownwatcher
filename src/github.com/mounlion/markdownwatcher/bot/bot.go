@@ -106,7 +106,7 @@ func CatalogMessage(item parsing.Item, OldDiDiscountPrice int)string {
 		catalog += fmt.Sprintf("\n<i>Переуценка на %d₽</i>", OldDiDiscountPrice-item.Price)
 	}
 	if len(item.Desc) > 0 {
-		catalog += fmt.Sprintf("<i>%s</i>", item.Desc)
+		catalog += fmt.Sprintf("\n\n<i>%s</i>", item.Desc)
 	}
 	catalog += "\n\n"
 

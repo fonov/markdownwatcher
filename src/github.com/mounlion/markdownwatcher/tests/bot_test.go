@@ -23,7 +23,8 @@ func TestSendMessage(t *testing.T) {
 			parsing.Item{
 				"6f4e2f77-07ad-43ee-b7dd-86458589dc29",
 				"GPS навигатор DEXP Auriga DS501",
-				"","/catalog/markdown/6f4e2f77-07ad-43ee-b7dd-86458589dc29/", 1099,	2299,
+				"Комплект: нет упаковки. Внешний вид: потертости. Вид: локальный ремонт.",
+				"/catalog/markdown/6f4e2f77-07ad-43ee-b7dd-86458589dc29/", 1099,	2299,
 			},
 			1199,
 		},
