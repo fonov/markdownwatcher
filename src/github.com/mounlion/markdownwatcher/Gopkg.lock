@@ -2,9 +2,21 @@
 
 
 [[projects]]
+  name = "github.com/PuerkitoBio/goquery"
+  packages = ["."]
+  revision = "dc2ec5c7ca4d9aae063b79b9f581dd3ea6afd2b2"
+  version = "v1.4.1"
+
+[[projects]]
+  name = "github.com/andybalholm/cascadia"
+  packages = ["."]
+  revision = "901648c87902174f774fac311d7f176f8647bdaa"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/mattn/go-sqlite3"
   packages = ["."]
-  revision = "25ecb14adfc7543176f7d85 291ec7dba82c6f7e4"
+  revision = "25ecb14adfc7543176f7d85291ec7dba82c6f7e4"
   version = "v1.9.0"
 
 [[projects]]
@@ -20,7 +32,7 @@
     "html",
     "html/atom"
   ]
-  revision = "a680a1efc54dd51c040b3b5ce4939ea3cf2ea0d1"
+  revision = "3673e40ba22529d22c3fd7c93e97b0ce50fa7bdd"
 
 [[projects]]
   name = "gopkg.in/telegram-bot-api.v4"
@@ -31,6 +43,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7872932143c8c992d2bc6dc2521f4af53eb0eed11e3b4105ca0e53aec6e2c8c8"
+  inputs-digest = "0a09864e42735ea0306103ca7c1c9d037f9c24d0b97b04d9034766069e0fac90"
   solver-name = "gps-cdcl"
   solver-version = 1

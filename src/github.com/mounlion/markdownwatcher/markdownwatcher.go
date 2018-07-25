@@ -7,7 +7,6 @@ import (
 	"github.com/mounlion/markdownwatcher/database"
 	"github.com/mounlion/markdownwatcher/bot"
 	"flag"
-	"os"
 	"log"
 )
 
@@ -27,8 +26,8 @@ func main() {
 
 	if *Debug {
 		BotToken = "***REMOVED***"
-		HoursUpdate = append(HoursUpdate,  9, 11, 12, 13, 14, 15, 16, 17, 18, 22, 23, 0)
-		DataSourceName = os.Getenv("GOPATH")+"***REMOVED***"
+		HoursUpdate = append(HoursUpdate,  9, 11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 0)
+		DataSourceName = "***REMOVED***"
 	} else {
 		BotToken = "***REMOVED***"
 		HoursUpdate = append(HoursUpdate,  8, 10, 12, 14, 17, 19, 22)

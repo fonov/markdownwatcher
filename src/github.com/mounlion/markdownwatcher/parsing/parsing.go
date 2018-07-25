@@ -57,7 +57,7 @@ func Catalog(rawHtml string) []model.Item {
 			case "div":
 				for _, val := range t.Attr {
 					switch {
-					case val.Key == "data-id" && val.Val == "product":
+					case val.Key == "class" && val.Val == "order-avail-wrap":
 						if len(tempItem.Title) >  0 {
 							Items = append(Items, tempItem)
 							tempItem = model.Item{}
