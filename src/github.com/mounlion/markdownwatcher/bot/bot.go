@@ -16,6 +16,13 @@ func SetBotToken(value *string)  {
 }
 
 func SendCatalog(newItems []parsing.Item, updateItems[]parsing.Item)  {
+	bot, err := tgbotapi.NewBotAPI(*BotToken)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	users := database.GetUsers()
+
 	if len(newItems) > 0 || len(updateItems) > 0 {
 
 		var (
@@ -33,30 +40,31 @@ func SendCatalog(newItems []parsing.Item, updateItems[]parsing.Item)  {
 			updateItemsString += CatalogMessage(updateItems)
 		}
 
-		bot, err := tgbotapi.NewBotAPI(*BotToken)
-		if err != nil {
-			log.Panic(err)
-		}
-
-		users := database.GetUsers()
-
 		for _, user := range users {
 			if user.IsActive {
 				if len(newItemsString) > 0 {
-					sendCatalogMessage(bot, &user, &newItemsString)
+					sendMessage(bot, &user, &newItemsString, false)
 				}
 				if len(updateItemsString) > 0 {
-					sendCatalogMessage(bot, &user, &updateItemsString)
+					sendMessage(bot, &user, &updateItemsString, false)
 				}
+			}
+		}
+	} else {
+		for _, user := range users {
+			if user.IsActive {
+				text := "<b>Новых или обновленных товаров не найдено</b>"
+				sendMessage(bot, &user, &text, true)
 			}
 		}
 	}
 }
 
-func sendCatalogMessage(bot *tgbotapi.BotAPI, user *database.User, message *string)  {
+func sendMessage(bot *tgbotapi.BotAPI, user *database.User, message *string, DisableNotification bool)  {
 	msg := tgbotapi.NewMessage(user.Id, *message)
 	msg.ParseMode = "HTML"
 	msg.DisableWebPagePreview = true
+	msg.DisableNotification = DisableNotification
 	_, err := bot.Send(msg)
 	if err != nil {
 		if err.Error() == "Forbidden: bot was blocked by the user" {
@@ -75,14 +83,7 @@ func SendServiceMessage(text string)  {
 
 	for _, user := range users {
 		if user.IsActive && user.IsAdmin {
-			msg := tgbotapi.NewMessage(user.Id, text)
-			msg.ParseMode = "HTML"
-			_, err := bot.Send(msg)
-			if err != nil {
-				if err.Error() == "Forbidden: bot was blocked by the user" {
-					database.Subscribe(int(user.Id), false)
-				}
-			}
+			sendMessage(bot, &user, &text, false)
 		}
 	}
 }
