@@ -43,6 +43,7 @@ func main() {
 
 	for {
 		now := time.Now()
+		log.Println(now)
 		for _, v := range HoursUpdate {
 			if v == now.Hour() {
 				if *Logger {log.Printf("Start synchronizations catalog")}
