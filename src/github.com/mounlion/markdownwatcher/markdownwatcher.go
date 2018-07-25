@@ -30,7 +30,7 @@ func main() {
 		DataSourceName = "***REMOVED***"
 	} else {
 		BotToken = "***REMOVED***"
-		HoursUpdate = append(HoursUpdate,  8, 10, 12, 14, 17, 19, 22)
+		HoursUpdate = append(HoursUpdate,  8, 10, 12, 14, 17, 19, 22, 23)
 		DataSourceName = "/home/fonov/markdownwatcher/MarkDownWatcher.prod.db"
 	}
 
