@@ -94,7 +94,9 @@ func CatalogMessage(items []parsing.Item) string {
 		catalog += fmt.Sprintf("<a href=\"%s%s\">%s</a>\n", DNSDomain, val.Url, val.Title)
 		catalog += fmt.Sprintf("<b>%d₽</b>", val.Price)
 		if val.OldPrice != 0 {
-			catalog += fmt.Sprintf("    <code>%d₽</code>", val.OldPrice)
+			profit := 100-(float64(val.Price)/float64(val.OldPrice)*100)
+			catalog += fmt.Sprintf("    <code>%d₽ %.1f%%</code>", val.OldPrice, profit)
+			fmt.Println(catalog)
 		}
 		if len(val.Desc) > 0 {
 			catalog += fmt.Sprintf("<i>%s</i>", val.Desc)
