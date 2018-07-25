@@ -16,7 +16,7 @@ func SetBotToken(value *string)  {
 	BotToken = value
 }
 
-func SendCatalog(newItems []parsing.Item, updateItems []model.UpdateItem)  {
+func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
 	bot, err := tgbotapi.NewBotAPI(*BotToken)
 	if err != nil {
 		log.Panic(err)
@@ -65,7 +65,7 @@ func SendCatalog(newItems []parsing.Item, updateItems []model.UpdateItem)  {
 	}
 }
 
-func sendMessage(bot *tgbotapi.BotAPI, user *database.User, message *string, DisableNotification bool)  {
+func sendMessage(bot *tgbotapi.BotAPI, user *model.User, message *string, DisableNotification bool)  {
 	msg := tgbotapi.NewMessage(user.Id, *message)
 	msg.ParseMode = "HTML"
 	msg.DisableWebPagePreview = true
@@ -93,7 +93,7 @@ func SendServiceMessage(text string)  {
 	}
 }
 
-func CatalogMessage(item parsing.Item, OldDiDiscountPrice int)string {
+func CatalogMessage(item model.Item, OldDiDiscountPrice int)string {
 	var catalog string
 
 	catalog += fmt.Sprintf("<a href=\"%s%s\">%s</a>\n", DNSDomain, item.Url, item.Title)

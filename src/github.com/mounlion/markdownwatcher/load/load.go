@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"github.com/mounlion/markdownwatcher/bot"
+	"github.com/mounlion/markdownwatcher/model"
 )
 
 var (
@@ -17,16 +18,6 @@ var (
 		"Cookie": "***REMOVED***",
 	}
 )
-
-type JsonObject struct {
-	FiltersOptions   string      `json:"filtersOptions"`
-	IsNextLoadAvailable   bool      `json:"isNextLoadAvailable"`
-	IsNextLoadFinal   bool      `json:"isNextLoadFinal"`
-	LastProductIndex   int      `json:"lastProductIndex"`
-	FilteredProductsCount   int      `json:"filteredProductsCount"`
-	Result   bool      `json:"result"`
-	Html   string      `json:"html"`
-}
 
 func Catalog() string {
 	var lastProductIndex, html = 0, ""
@@ -52,7 +43,7 @@ func Catalog() string {
 	return html
 }
 
-func fetchCatalog (offset int)  (JsonObject, int)  {
+func fetchCatalog (offset int)  (model.JsonObject, int)  {
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -69,7 +60,7 @@ func fetchCatalog (offset int)  (JsonObject, int)  {
 		fmt.Println("Http request error")
 	}
 	buf, _ := ioutil.ReadAll(resp.Body)
-	jsonObj := JsonObject{}
+	jsonObj := model.JsonObject{}
 	if resp.StatusCode == 200 {
 		json.Unmarshal(buf, &jsonObj)
 		return jsonObj, resp.StatusCode

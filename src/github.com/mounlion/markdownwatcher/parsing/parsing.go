@@ -5,25 +5,17 @@ import (
 	"golang.org/x/net/html"
 	"strings"
 	"strconv"
+	"github.com/mounlion/markdownwatcher/model"
 )
 
-type Item struct {
-	ItemId string
-	Title string
-	Desc string
-	Url string
-	Price int
-	OldPrice int
-}
-
-func Catalog(rawHtml string) []Item {
+func Catalog(rawHtml string) []model.Item {
 
 	var (
 		typeOfWaitData int
-		Items []Item
+		Items []model.Item
 		isWaitText = false
 		z = html.NewTokenizer(strings.NewReader(rawHtml))
-		tempItem = Item{}
+		tempItem = model.Item{}
 		isWaitTextList bool
 		typeOfWaitListDate int 
 		lastClass = make([]string, 3)
@@ -58,7 +50,7 @@ func Catalog(rawHtml string) []Item {
 					case val.Key == "data-id" && val.Val == "product":
 						if len(tempItem.Title) >  0 {
 							Items = append(Items, tempItem)
-							tempItem = Item{}
+							tempItem = model.Item{}
 						}
 					case val.Key == "class" && val.Val == "item-name":
 						isWaitText = true

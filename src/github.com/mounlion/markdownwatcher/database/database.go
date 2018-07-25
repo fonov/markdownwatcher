@@ -14,7 +14,7 @@ func SetDataSourceName(value *string) {
 	DataSourceName = value
 }
 
-func PrepareItems(items []parsing.Item) ([]parsing.Item, []model.UpdateItem) {
+func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
 	db, err := sql.Open("sqlite3", *DataSourceName)
 	CheckErr(err)
 	defer db.Close()
@@ -87,17 +87,11 @@ func PrepareItems(items []parsing.Item) ([]parsing.Item, []model.UpdateItem) {
 	if CountRows > 0 {
 		return items, updateItems
 	} else {
-		return []parsing.Item{}, updateItems
+		return []model.Item{}, updateItems
 	}
 }
 
-type User struct {
-	Id int64
-	IsActive bool
-	IsAdmin bool
-}
-
-func GetUsers() []User {
+func GetUsers() []model.User {
 	db, err := sql.Open("sqlite3", *DataSourceName)
 	CheckErr(err)
 	defer db.Close()
@@ -107,7 +101,7 @@ func GetUsers() []User {
 	defer rows.Close()
 
 	var (
-		Users []User
+		Users []model.User
 		id int64
 		isActive bool
 		isAdmin bool
@@ -116,7 +110,7 @@ func GetUsers() []User {
 	for rows.Next() {
 		err = rows.Scan(&id, &isActive, &isAdmin)
 		CheckErr(err)
-		Users = append(Users, User{id, isActive, isAdmin})
+		Users = append(Users, model.User{id, isActive, isAdmin})
 	}
 
 	return Users
