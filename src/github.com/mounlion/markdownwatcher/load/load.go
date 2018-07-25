@@ -25,8 +25,8 @@ func SetInitialValue(_Logger *bool)  {
 	Logger = _Logger
 }
 
-func Catalog() string {
-	var lastProductIndex, html = 0, ""
+func Catalog(lastProductIndex int) string {
+	var html string
 
 	for {
 		if *Logger {log.Printf("Fetch offset %d", lastProductIndex)}

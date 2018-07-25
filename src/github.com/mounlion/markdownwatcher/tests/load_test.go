@@ -6,5 +6,5 @@ import (
 )
 
 func TestLoadCatalog(t *testing.T) {
-	load.Catalog()
+	load.Catalog(0)
 }

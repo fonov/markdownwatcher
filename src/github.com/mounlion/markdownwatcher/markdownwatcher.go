@@ -47,7 +47,7 @@ func main() {
 		for _, v := range HoursUpdate {
 			if v == now.Hour() {
 				if *Logger {log.Printf("Start synchronizations catalog")}
-				html := load.Catalog()
+				html := load.Catalog(0)
 				if len(html) == 0 { break }
 				catalog := parsing.Catalog(html)
 				newItems, updateItems := database.PrepareItems(catalog)
