@@ -5,6 +5,7 @@ import (
 	"github.com/mounlion/markdownwatcher/parsing"
 	"database/sql"
 	"log"
+	"github.com/mounlion/markdownwatcher/model"
 )
 
 var DataSourceName *string
@@ -13,7 +14,7 @@ func SetDataSourceName(value *string) {
 	DataSourceName = value
 }
 
-func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
+func PrepareItems(items []parsing.Item) ([]parsing.Item, []model.UpdateItem) {
 	db, err := sql.Open("sqlite3", *DataSourceName)
 	CheckErr(err)
 	defer db.Close()
@@ -38,7 +39,7 @@ func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
 	var (
 		id string
 		price int
-		updateItems []parsing.Item
+		updateItems []model.UpdateItem
 		CountRows int
 	)
 
@@ -48,7 +49,7 @@ func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
 		for i, item := range items {
 			if item.ItemId == id {
 				if item.Price != price {
-					updateItems = append(updateItems, item)
+					updateItems = append(updateItems, model.UpdateItem{Item: item, OldDiDiscountPrice: price})
 				}
 				items = append(items[:i], items[i+1:]...)
 				break
@@ -75,7 +76,7 @@ func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
 			if err != nil {log.Fatal(err)}
 			defer stmt.Close()
 			for _, item := range updateItems {
-				_, err = stmt.Exec(item.Price, item.ItemId)
+				_, err = stmt.Exec(item.Item.Price, item.Item.ItemId)
 				if err != nil {log.Fatal(err)}
 			}
 		}
@@ -86,7 +87,7 @@ func PrepareItems(items []parsing.Item) ([]parsing.Item, []parsing.Item) {
 	if CountRows > 0 {
 		return items, updateItems
 	} else {
-		return []parsing.Item{}, []parsing.Item{}
+		return []parsing.Item{}, updateItems
 	}
 }
 

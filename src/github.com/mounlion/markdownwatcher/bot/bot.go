@@ -6,6 +6,7 @@ import (
 	"github.com/mounlion/markdownwatcher/database"
 	"gopkg.in/telegram-bot-api.v4"
 	"log"
+	"github.com/mounlion/markdownwatcher/model"
 )
 
 const DNSDomain = "https://www.dns-shop.ru"
@@ -15,7 +16,7 @@ func SetBotToken(value *string)  {
 	BotToken = value
 }
 
-func SendCatalog(newItems []parsing.Item, updateItems[]parsing.Item)  {
+func SendCatalog(newItems []parsing.Item, updateItems []model.UpdateItem)  {
 	bot, err := tgbotapi.NewBotAPI(*BotToken)
 	if err != nil {
 		log.Panic(err)
@@ -32,12 +33,16 @@ func SendCatalog(newItems []parsing.Item, updateItems[]parsing.Item)  {
 
 		if len(newItems) > 0 {
 			newItemsString += "<b>Новые товары</b>\n\n"
-			newItemsString += CatalogMessage(newItems)
+			for _, val := range newItems {
+				newItemsString += CatalogMessage(val, 0)
+			}
 		}
 
 		if len(updateItems) > 0 {
 			updateItemsString += "<b>Обновление цен</b>\n\n"
-			updateItemsString += CatalogMessage(updateItems)
+			for _, val := range updateItems {
+				updateItemsString += CatalogMessage(val.Item, val.OldDiDiscountPrice)
+			}
 		}
 
 		for _, user := range users {
@@ -88,22 +93,22 @@ func SendServiceMessage(text string)  {
 	}
 }
 
-func CatalogMessage(items []parsing.Item) string {
+func CatalogMessage(item parsing.Item, OldDiDiscountPrice int)string {
 	var catalog string
 
-	for _, val := range items {
-		catalog += fmt.Sprintf("<a href=\"%s%s\">%s</a>\n", DNSDomain, val.Url, val.Title)
-		catalog += fmt.Sprintf("<b>%d₽</b>", val.Price)
-		if val.OldPrice != 0 {
-			profit := 100-(float64(val.Price)/float64(val.OldPrice)*100)
-			catalog += fmt.Sprintf("    <code>%d₽ %.1f%%</code>", val.OldPrice, profit)
-			fmt.Println(catalog)
-		}
-		if len(val.Desc) > 0 {
-			catalog += fmt.Sprintf("<i>%s</i>", val.Desc)
-		}
-		catalog += "\n\n"
+	catalog += fmt.Sprintf("<a href=\"%s%s\">%s</a>\n", DNSDomain, item.Url, item.Title)
+	catalog += fmt.Sprintf("<b>%d₽</b>", item.Price)
+	if item.OldPrice != 0 {
+		profit := 100-(float64(item.Price)/float64(item.OldPrice)*100)
+		catalog += fmt.Sprintf("    <code>%d₽ %.1f%%</code>", item.OldPrice, profit)
 	}
+	if OldDiDiscountPrice != 0 {
+		catalog += fmt.Sprintf("\n<i>Переуценка на %d₽</i>", OldDiDiscountPrice-item.Price)
+	}
+	if len(item.Desc) > 0 {
+		catalog += fmt.Sprintf("<i>%s</i>", item.Desc)
+	}
+	catalog += "\n\n"
 
 	return catalog
 }
