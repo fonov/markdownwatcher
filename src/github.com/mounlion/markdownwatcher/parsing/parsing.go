@@ -6,7 +6,15 @@ import (
 	"strings"
 	"strconv"
 	"github.com/mounlion/markdownwatcher/model"
+	"log"
 )
+var (
+	Logger *bool
+)
+
+func SetInitialValue(_Logger *bool)  {
+	Logger = _Logger
+}
 
 func Catalog(rawHtml string) []model.Item {
 
@@ -21,6 +29,8 @@ func Catalog(rawHtml string) []model.Item {
 		lastClass = make([]string, 3)
 		countLBL int
 	)
+
+	if *Logger {log.Printf("Start parsing catalog")}
 
 	for {
 		tt := z.Next()
@@ -148,6 +158,8 @@ func Catalog(rawHtml string) []model.Item {
 			}
 		}
 	}
+
+	if *Logger {log.Printf("Finish parsing catalog. Count: %d.", len(Items))}
 
 	return Items
 }

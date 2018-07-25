@@ -5,13 +5,12 @@ import (
 	"github.com/mounlion/markdownwatcher/bot"
 	"os"
 	"github.com/mounlion/markdownwatcher/database"
-	"github.com/mounlion/markdownwatcher/parsing"
 	"github.com/mounlion/markdownwatcher/model"
 )
 
 func TestSendMessage(t *testing.T) {
 
-	newItems := []parsing.Item{
+	newItems := []model.Item{
 		//parsing.Item{"be40e256-898c-4480-bea5-fc86fd23b45d", "GPS навигатор DEXP Auriga DS503", "", "/catalog/markdown/be40e256-898c-4480-bea5-fc86fd23b45d/", 1200, 2000},
 		//parsing.Item{"be40e256-898c-4480-bea5-fc86fd23b45d", "GPS навигатор DEXP Auriga DS503", "", "/catalog/markdown/be40e256-898c-4480-bea5-fc86fd23b45d/", 1200, 2000},
 		//parsing.Item{"be40e256-898c-4480-bea5-fc86fd23b45d", "GPS навигатор DEXP Auriga DS503", "", "/catalog/markdown/be40e256-898c-4480-bea5-fc86fd23b45d/", 1200, 2000},
@@ -20,7 +19,7 @@ func TestSendMessage(t *testing.T) {
 
 	updateItems := []model.UpdateItem{
 		model.UpdateItem{
-			parsing.Item{
+			model.Item{
 				"6f4e2f77-07ad-43ee-b7dd-86458589dc29",
 				"GPS навигатор DEXP Auriga DS501",
 				"Комплект: нет упаковки. Внешний вид: потертости. Вид: локальный ремонт.",
@@ -45,9 +44,10 @@ func TestSendMessage(t *testing.T) {
 
 	var BotToken = "***REMOVED***"
 	var DataSourceName = os.Getenv("GOPATH")+"***REMOVED***"
+	var Logger = false
 
-	database.SetDataSourceName(&DataSourceName)
-	bot.SetBotToken(&BotToken)
+	database.SetInitialValue(&DataSourceName, &Logger)
+	bot.SetInitialValue(&BotToken, &Logger)
 
 	bot.SendCatalog(newItems, updateItems)
 }

@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"github.com/mounlion/markdownwatcher/parsing"
 	"fmt"
 	"github.com/mounlion/markdownwatcher/database"
 	"gopkg.in/telegram-bot-api.v4"
@@ -10,19 +9,23 @@ import (
 )
 
 const DNSDomain = "https://www.dns-shop.ru"
-var BotToken *string
+var (
+	BotToken *string
+	Logger *bool
+)
 
-func SetBotToken(value *string)  {
-	BotToken = value
+func SetInitialValue(_BotToken *string, _Logger *bool)  {
+	BotToken = _BotToken
+	Logger = _Logger
 }
 
 func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
 	bot, err := tgbotapi.NewBotAPI(*BotToken)
-	if err != nil {
-		log.Panic(err)
-	}
+	if err != nil {log.Panic(err)}
 
 	users := database.GetUsers()
+
+	if *Logger {log.Printf("Send Catalog. newItems: %d, updateItems: %d.", len(newItems), len(updateItems))}
 
 	if len(newItems) > 0 || len(updateItems) > 0 {
 
@@ -86,6 +89,8 @@ func SendServiceMessage(text string)  {
 		log.Panic(err)
 	}
 
+	if *Logger {log.Printf("Send service message")}
+
 	for _, user := range users {
 		if user.IsActive && user.IsAdmin {
 			sendMessage(bot, &user, &text, false)
@@ -100,7 +105,7 @@ func CatalogMessage(item model.Item, OldDiDiscountPrice int)string {
 	catalog += fmt.Sprintf("<b>%d₽</b>", item.Price)
 	if item.OldPrice != 0 {
 		profit := 100-(float64(item.Price)/float64(item.OldPrice)*100)
-		catalog += fmt.Sprintf("    <code>%d₽ %.1f%%</code>", item.OldPrice, profit)
+		catalog += fmt.Sprintf("		%d₽ %.1f%%", item.OldPrice, profit)
 	}
 	if OldDiDiscountPrice != 0 {
 		catalog += fmt.Sprintf("\n<i>Переуценка на %d₽</i>", OldDiDiscountPrice-item.Price)

@@ -8,6 +8,7 @@ import (
 	"github.com/mounlion/markdownwatcher/bot"
 	"flag"
 	"os"
+	"log"
 )
 
 var (
@@ -19,7 +20,10 @@ var (
 
 func main() {
 	Debug := flag.Bool("debug", false, "Use debug mode for create and update Mark Down Watcher")
+	Logger := flag.Bool("log", false, "Use log for view all processes")
 	flag.Parse()
+
+	if *Logger {log.Printf("Start Mark Down Watcher. Debug: %t, Logger: %t", *Debug, *Logger)}
 
 	if *Debug {
 		BotToken = "***REMOVED***"
@@ -31,8 +35,10 @@ func main() {
 		DataSourceName = "/home/fonov/markdownwatcher/MarkDownWatcher.prod.db"
 	}
 
-	database.SetDataSourceName(&DataSourceName)
-	bot.SetBotToken(&BotToken)
+	database.SetInitialValue(&DataSourceName, Logger)
+	bot.SetInitialValue(&BotToken, Logger)
+	load.SetInitialValue(Logger)
+	parsing.SetInitialValue(Logger)
 
 	go bot.Front(BotToken)
 
@@ -40,11 +46,13 @@ func main() {
 		now := time.Now()
 		for _, v := range HoursUpdate {
 			if v == now.Hour() {
+				if *Logger {log.Printf("Start synchronizations catalog")}
 				html := load.Catalog()
 				if len(html) == 0 { break }
 				catalog := parsing.Catalog(html)
 				newItems, updateItems := database.PrepareItems(catalog)
 				bot.SendCatalog(newItems, updateItems)
+				if *Logger {log.Printf("Finish synchronizations catalog")}
 				break
 			}
 		}

@@ -2,16 +2,19 @@ package database
 
 import (
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/mounlion/markdownwatcher/parsing"
 	"database/sql"
 	"log"
 	"github.com/mounlion/markdownwatcher/model"
 )
 
-var DataSourceName *string
+var (
+	DataSourceName *string
+	Logger *bool
+)
 
-func SetDataSourceName(value *string) {
-	DataSourceName = value
+func SetInitialValue(_DataSourceName *string, _Logger *bool) {
+	DataSourceName = _DataSourceName
+	Logger = _Logger
 }
 
 func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
@@ -34,6 +37,9 @@ func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
 
 	rows, err := db.Query(selectStr, selectIds...)
 	if err != nil {log.Fatal(err)}
+
+	if *Logger {log.Printf("select id, price from items where id = []model.Item")}
+
 	defer rows.Close()
 
 	var (
@@ -70,6 +76,7 @@ func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
 				_, err = stmt.Exec(item.ItemId, item.Title, item.Url, NullString(item.Desc), item.Price, NullInt(item.OldPrice))
 				if err != nil {log.Fatal(err)}
 			}
+			if *Logger {log.Printf("insert %d items", len(items))}
 		}
 		if len(updateItems) > 0 {
 			stmt, err := tx.Prepare("UPDATE items set price=? where id=?")
@@ -79,6 +86,7 @@ func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
 				_, err = stmt.Exec(item.Item.Price, item.Item.ItemId)
 				if err != nil {log.Fatal(err)}
 			}
+			if *Logger {log.Printf("update %d items", len(updateItems))}
 		}
 
 		tx.Commit()
@@ -98,6 +106,7 @@ func GetUsers() []model.User {
 
 	rows, err := db.Query("SELECT id, isActive, isAdmin from users")
 	if err != nil {log.Fatal(err)}
+	if *Logger {log.Printf("SELECT id, isActive, isAdmin from users")}
 	defer rows.Close()
 
 	var (
@@ -130,12 +139,16 @@ func Subscribe(userId int, isActive bool) {
 	n, err := res.RowsAffected()
 	CheckErr(err)
 
+	if *Logger {log.Printf("update users set isActive=%t where id=%d. RowsAffected: %d.", isActive, userId, n)}
+
 	if n == 0 {
 		stmt, err = db.Prepare("insert into users(id, isActive) values (?,?)")
 		CheckErr(err)
 
 		_, err = stmt.Exec(userId, isActive)
 		CheckErr(err)
+
+		if *Logger {log.Printf("insert into users(id, isActive) values (%d,%t)", n, userId, isActive)}
 	}
 }
 

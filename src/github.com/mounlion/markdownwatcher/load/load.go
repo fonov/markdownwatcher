@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"github.com/mounlion/markdownwatcher/bot"
 	"github.com/mounlion/markdownwatcher/model"
+	"log"
 )
 
 var (
@@ -17,16 +18,21 @@ var (
 		"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
 		"Cookie": "***REMOVED***",
 	}
+	Logger *bool
 )
+
+func SetInitialValue(_Logger *bool)  {
+	Logger = _Logger
+}
 
 func Catalog() string {
 	var lastProductIndex, html = 0, ""
 
 	for {
-		fmt.Println("Fetch offset %v", lastProductIndex)
+		if *Logger {log.Printf("Fetch offset %d", lastProductIndex)}
 		result, statusCode := fetchCatalog(lastProductIndex)
 		if statusCode != 200 {
-			fmt.Println("Fetch failed. Status code: ", statusCode)
+			if *Logger {log.Printf("Fetch failed. Status code: %d", statusCode)}
 			message := fmt.Sprintf("<b>Обнаружена проблема</b>\n\nСтатус ответа сервера: <code>%d</code>", statusCode)
 			bot.SendServiceMessage(message)
 			break
@@ -35,7 +41,7 @@ func Catalog() string {
 		if result.IsNextLoadAvailable {
 			lastProductIndex = result.LastProductIndex
 		} else {
-			fmt.Println("All fetch end")
+			if *Logger {log.Printf("All fetch end")}
 			break
 		}
 	}
@@ -48,17 +54,13 @@ func fetchCatalog (offset int)  (model.JsonObject, int)  {
 		Timeout: time.Second * 10,
 	}
 	req, err := http.NewRequest("GET", "https://www.dns-shop.ru/catalogMarkdown/category/update/?offset="+strconv.Itoa(offset), nil)
-	if err != nil {
-		fmt.Println("NewRequest error")
-	}
+	if err != nil {log.Printf("NewRequest error")}
 	for key, val := range headers {
 		req.Header.Add(key, val)
 	}
 	resp, err := netClient.Do(req)
 	defer resp.Body.Close()
-	if err != nil {
-		fmt.Println("Http request error")
-	}
+	if err != nil {log.Printf("Http request error")}
 	buf, _ := ioutil.ReadAll(resp.Body)
 	jsonObj := model.JsonObject{}
 	if resp.StatusCode == 200 {

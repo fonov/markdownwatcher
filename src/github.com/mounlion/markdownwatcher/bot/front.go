@@ -18,6 +18,8 @@ func Front(BotToken string) {
 		log.Panic(err)
 	}
 
+	if *Logger {log.Printf("Start bot front. Token: %s", BotToken)}
+
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
