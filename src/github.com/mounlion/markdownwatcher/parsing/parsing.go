@@ -24,7 +24,10 @@ func Catalog(rawHtml string) []Item {
 		isWaitText = false
 		z = html.NewTokenizer(strings.NewReader(rawHtml))
 		tempItem = Item{}
+		isWaitTextList bool
+		typeOfWaitListDate int 
 		lastClass = make([]string, 3)
+		countLBL int
 	)
 
 	for {
@@ -36,15 +39,15 @@ func Catalog(rawHtml string) []Item {
 			t := z.Token()
 			for _, val := range t.Attr {
 				if  val.Key == "class" {
-					for i, v := range lastClass {
-						if len(v) == 0 {
-							lastClass[i] = val.Val
-							break
+					if len(lastClass[len(lastClass)-1]) == 0 {
+						for i, v := range lastClass {
+							if len(v) == 0 {
+								lastClass[i] = val.Val
+								break
+							}
 						}
-						if len(lastClass)-1 == i {
-							lastClass = make([]string, 3)
-							lastClass[0] = val.Val
-						}
+					} else {
+						lastClass = append(lastClass[1:], val.Val)
 					}
 				}
 			}
@@ -64,6 +67,9 @@ func Catalog(rawHtml string) []Item {
 					case val.Key == "class" && val.Val == "markdown-price-old":
 						isWaitText = true
 						typeOfWaitData = 3
+						break
+					case val.Key == "class" && val.Val == "characteristic-description":
+						isWaitTextList = false
 						break
 					}
 				}
@@ -95,13 +101,22 @@ func Catalog(rawHtml string) []Item {
 						break
 					}
 				}
+			case "ul":
+				for _, val := range t.Attr {
+					if val.Key == "class" && val.Val == "list-unstyled markdown-reasons" {
+						isWaitTextList = true
+						typeOfWaitListDate = 1
+						break
+					}
+				}
 			}
 		case tt == html.TextToken:
-			if lastClass[0] == "item-desc" && lastClass[1] == "small-screens" && lastClass[2] == "ec-price-item-link" {
+			switch {
+			case lastClass[0] == "item-desc" && lastClass[1] == "small-screens" && lastClass[2] == "ec-price-item-link":
 				t := z.Token()
 				tempItem.Desc = t.Data
-			}
-			if isWaitText {
+				break
+			case isWaitText:
 				t := z.Token()
 				switch typeOfWaitData {
 				case 1:
@@ -124,6 +139,20 @@ func Catalog(rawHtml string) []Item {
 					break
 				}
 				isWaitText = false
+			case isWaitTextList:
+				t := z.Token()
+				switch typeOfWaitListDate {
+				case 1:
+					if lastClass[2] == "lbl" && countLBL == 0{
+						tempItem.Desc += fmt.Sprintf("%s: ", t.Data)
+						countLBL++
+					}
+					if lastClass[2] == "reasons-inline" {
+						tempItem.Desc += fmt.Sprintf("%s. ", t.Data)
+						countLBL--
+					}
+					break
+				}
 			}
 		}
 	}
