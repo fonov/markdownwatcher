@@ -30,31 +30,49 @@ func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
 	if len(newItems) > 0 || len(updateItems) > 0 {
 
 		var (
-			newItemsString string
-			updateItemsString string
+			newItemsStringList []string
+			updateItemsStringList []string
+			newItemsLastIndex = 0
+			updateItemsLastIndex = 0
 		)
 
 		if len(newItems) > 0 {
-			newItemsString += "<b>Новые товары</b>\n\n"
+			newItemsStringList = make([]string, 1)
+			newItemsStringList[newItemsLastIndex] += "<b>Новые товары</b>\n\n"
 			for _, val := range newItems {
-				newItemsString += CatalogMessage(val, 0)
+				if len(newItemsStringList[newItemsLastIndex] + CatalogMessage(val, 0)) > 4096 {
+					newItemsStringList = append(newItemsStringList, CatalogMessage(val, 0))
+					newItemsLastIndex++
+				} else {
+					newItemsStringList[newItemsLastIndex] += CatalogMessage(val, 0)
+				}
 			}
 		}
 
 		if len(updateItems) > 0 {
-			updateItemsString += "<b>Обновление цен</b>\n\n"
+			updateItemsStringList = make([]string, 1)
+			updateItemsStringList[updateItemsLastIndex] += "<b>Обновление цен</b>\n\n"
 			for _, val := range updateItems {
-				updateItemsString += CatalogMessage(val.Item, val.OldDiDiscountPrice)
+				if len(updateItemsStringList[updateItemsLastIndex] + CatalogMessage(val.Item, val.OldDiDiscountPrice)) > 4096 {
+					updateItemsStringList = append(updateItemsStringList, CatalogMessage(val.Item, val.OldDiDiscountPrice))
+					updateItemsLastIndex++
+				} else {
+					updateItemsStringList[updateItemsLastIndex] += CatalogMessage(val.Item, val.OldDiDiscountPrice)
+				}
 			}
 		}
 
 		for _, user := range users {
 			if user.IsActive {
-				if len(newItemsString) > 0 {
-					sendMessage(bot, &user, &newItemsString, false)
+				if len(newItemsStringList) > 0 {
+					for _, mess := range newItemsStringList {
+						sendMessage(bot, &user, &mess, false)
+					}
 				}
-				if len(updateItemsString) > 0 {
-					sendMessage(bot, &user, &updateItemsString, false)
+				if len(updateItemsStringList) > 0 {
+					for _, mess := range updateItemsStringList {
+						sendMessage(bot, &user, &mess, false)
+					}
 				}
 			}
 		}
@@ -77,6 +95,8 @@ func sendMessage(bot *tgbotapi.BotAPI, user *model.User, message *string, Disabl
 	if err != nil {
 		if err.Error() == "Forbidden: bot was blocked by the user" {
 			database.Subscribe(int(user.Id), false)
+		} else {
+			log.Print(err.Error())
 		}
 	}
 }
