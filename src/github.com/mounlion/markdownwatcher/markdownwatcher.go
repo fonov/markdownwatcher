@@ -16,13 +16,14 @@ var (
 	BotToken string
 )
 
+const AppVersion = 1.2
 
 func main() {
 	Debug := flag.Bool("debug", false, "Use debug mode for create and update Mark Down Watcher")
 	Logger := flag.Bool("log", false, "Use log for view all processes")
 	flag.Parse()
 
-	if *Logger {log.Printf("Start Mark Down Watcher. Debug: %t, Logger: %t", *Debug, *Logger)}
+	if *Logger {log.Printf("Start Mark Down Watcher v. %.1f. Debug: %t, Logger: %t", AppVersion, *Debug, *Logger)}
 
 	if *Debug {
 		BotToken = "***REMOVED***"
