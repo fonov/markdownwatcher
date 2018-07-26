@@ -33,14 +33,23 @@ func Front(BotToken string) {
 		case "/start":
 			database.Subscribe(update.Message.From.ID, true)
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, start)
-			bot.Send(msg)
+			_, err := bot.Send(msg)
+			if err != nil {
+				log.Print(err.Error())
+			}
 		case "/stop":
 			database.Subscribe(update.Message.From.ID, false)
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, stop)
-			bot.Send(msg)
+			_, err := bot.Send(msg)
+			if err != nil {
+				log.Print(err.Error())
+			}
 		default:
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, otherwise)
-			bot.Send(msg)
+			_, err := bot.Send(msg)
+			if err != nil {
+				log.Print(err.Error())
+			}
 		}
 	}
 }
