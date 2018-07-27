@@ -62,9 +62,9 @@ func fetchCatalog (offset int)  (model.JsonObject, int)  {
 	if resp.StatusCode == 200 {
 		json.Unmarshal(buf, &jsonObj)
 		return jsonObj, resp.StatusCode
-	} else {
-		fmt.Println(string(buf))
-		return jsonObj, resp.StatusCode
 	}
+
+	fmt.Println(string(buf))
+	return jsonObj, resp.StatusCode
 }
 

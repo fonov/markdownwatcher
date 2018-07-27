@@ -6,14 +6,12 @@ import (
 )
 
 var (
-	// struct with configs
 	Config = model.Config{}
 	hoursUpdate []int
 	botToken string
 	dataSource string
 )
 
-//
 func GetConfig()  {
 	Debug := flag.Bool("debug", false, "Use debug mode for create and update Mark Down Watcher")
 	Logger := flag.Bool("log", false, "Use log for view all processes")

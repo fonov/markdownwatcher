@@ -6,16 +6,16 @@ type UpdateItem struct {
 }
 
 type Item struct {
-	ItemId string
+	ItemID string
 	Title string
 	Desc string
-	Url string
+	URL string
 	Price int
 	OldPrice int
 }
 
 type User struct {
-	Id int64
+	ID int64
 	IsActive bool
 	IsAdmin bool
 }

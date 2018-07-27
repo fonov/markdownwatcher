@@ -13,7 +13,6 @@ const (
 	otherwise = "Введена неправильная команда"
 )
 
-// Front end of telegram boot process users command
 func Front() {
 	bot, err := tgbotapi.NewBotAPI(*config.Config.BotToken)
 	if err != nil {

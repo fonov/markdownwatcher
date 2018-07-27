@@ -70,7 +70,7 @@ func Catalog(rawHtml string) []model.Item {
 					}
 				}
 			case "a":
-				if len(tempItem.Url) > 0 { break }
+				if len(tempItem.URL) > 0 { break }
 				const className = "ec-price-item-link"
 				var href string
 				isNeedClass := false
@@ -84,9 +84,9 @@ func Catalog(rawHtml string) []model.Item {
 					if isNeedClass && len(href) > 0 { break }
 				}
 				if isNeedClass {
-					tempItem.Url = href
+					tempItem.URL = href
 					url := strings.Split(href, "/")
-					tempItem.ItemId = url[3]
+					tempItem.ItemID = url[3]
 				}
 			case "span":
 				for _, val := range t.Attr {

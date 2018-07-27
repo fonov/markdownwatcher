@@ -11,7 +11,6 @@ import (
 
 const dnsDomain = "https://www.dns-shop.ru"
 
-// SendCatalog send newItems and updateItems to users
 func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
 	bot, err := tgbotapi.NewBotAPI(*config.Config.BotToken)
 	if err != nil {log.Panic(err)}
@@ -80,21 +79,20 @@ func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
 }
 
 func sendMessage(bot *tgbotapi.BotAPI, user *model.User, message *string, DisableNotification bool)  {
-	msg := tgbotapi.NewMessage(user.Id, *message)
+	msg := tgbotapi.NewMessage(user.ID, *message)
 	msg.ParseMode = "HTML"
 	msg.DisableWebPagePreview = true
 	msg.DisableNotification = DisableNotification
 	_, err := bot.Send(msg)
 	if err != nil {
 		if err.Error() == "Forbidden: bot was blocked by the user" {
-			database.Subscribe(int(user.Id), false)
+			database.Subscribe(int(user.ID, false)
 		} else {
 			log.Print(err.Error())
 		}
 	}
 }
 
-// Send service message to users admin
 func SendServiceMessage(text string)  {
 	users := database.GetUsers()
 
@@ -112,11 +110,10 @@ func SendServiceMessage(text string)  {
 	}
 }
 
-// Format catalog message
 func CatalogMessage(item model.Item, OldDiDiscountPrice int)string {
 	var catalog string
 
-	catalog += fmt.Sprintf("<a href=\"%s%s\">%s</a>\n", dnsDomain, item.Url, item.Title)
+	catalog += fmt.Sprintf("<a href=\"%s%s\">%s</a>\n", dnsDomain, item.URL, item.Title)
 	catalog += fmt.Sprintf("<b>%d₽</b>", item.Price)
 	if item.OldPrice != 0 {
 		profit := 100-(float64(item.Price)/float64(item.OldPrice)*100)

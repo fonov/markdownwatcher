@@ -18,7 +18,7 @@ func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
 
 	for i, val := range items {
 		selectStr += "?"
-		selectIds[i] = val.ItemId
+		selectIds[i] = val.ItemID
 		if len(items)-1 != i {
 			selectStr += ","
 		} else {
@@ -44,7 +44,7 @@ func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
 		err = rows.Scan(&id, &price)
 		CheckErr(err)
 		for i, item := range items {
-			if item.ItemId == id {
+			if item.ItemID == id {
 				if item.Price != price {
 					updateItems = append(updateItems, model.UpdateItem{Item: item, OldDiDiscountPrice: price})
 				}
@@ -64,7 +64,7 @@ func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
 			if err != nil {log.Fatal(err)}
 			defer stmt.Close()
 			for _, item := range items {
-				_, err = stmt.Exec(item.ItemId, item.Title, item.Url, NullString(item.Desc), item.Price, NullInt(item.OldPrice))
+				_, err = stmt.Exec(item.ItemID, item.Title, item.URL, NullString(item.Desc), item.Price, NullInt(item.OldPrice))
 				if err != nil {log.Fatal(err)}
 			}
 			if *config.Config.Logger {log.Printf("insert %d items", len(items))}
@@ -74,7 +74,7 @@ func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
 			if err != nil {log.Fatal(err)}
 			defer stmt.Close()
 			for _, item := range updateItems {
-				_, err = stmt.Exec(item.Item.Price, item.Item.ItemId)
+				_, err = stmt.Exec(item.Item.Price, item.Item.ItemID)
 				if err != nil {log.Fatal(err)}
 			}
 			if *config.Config.Logger {log.Printf("update %d items", len(updateItems))}
@@ -85,9 +85,9 @@ func PrepareItems(items []model.Item) ([]model.Item, []model.UpdateItem) {
 
 	if CountRows > 0 {
 		return items, updateItems
-	} else {
-		return []model.Item{}, updateItems
 	}
+
+	return []model.Item{}, updateItems
 }
 
 func GetUsers() []model.User {
@@ -116,7 +116,7 @@ func GetUsers() []model.User {
 	return Users
 }
 
-func Subscribe(userId int, isActive bool) {
+func Subscribe(userID int, isActive bool) {
 	db, err := sql.Open("sqlite3", *config.Config.DataSource)
 	CheckErr(err)
 	defer db.Close()
@@ -124,22 +124,22 @@ func Subscribe(userId int, isActive bool) {
 	stmt, err := db.Prepare("update users set isActive=? where id=?")
 	CheckErr(err)
 
-	res, err := stmt.Exec(isActive, userId)
+	res, err := stmt.Exec(isActive, userID)
 	CheckErr(err)
 
 	n, err := res.RowsAffected()
 	CheckErr(err)
 
-	if *config.Config.Logger {log.Printf("update users set isActive=%t where id=%d. RowsAffected: %d.", isActive, userId, n)}
+	if *config.Config.Logger {log.Printf("update users set isActive=%t where id=%d. RowsAffected: %d.", isActive, userID, n)}
 
 	if n == 0 {
 		stmt, err = db.Prepare("insert into users(id, isActive) values (?,?)")
 		CheckErr(err)
 
-		_, err = stmt.Exec(userId, isActive)
+		_, err = stmt.Exec(userID, isActive)
 		CheckErr(err)
 
-		if *config.Config.Logger {log.Printf("insert into users(id, isActive) values (%d,%t)", n, userId, isActive)}
+		if *config.Config.Logger {log.Printf("insert into users(id, isActive) values (%d,%t)", n, userID, isActive)}
 	}
 }
 

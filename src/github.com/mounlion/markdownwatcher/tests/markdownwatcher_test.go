@@ -57,7 +57,7 @@ func TestMarkDownWatcher(t *testing.T) {
 
 	if len(catalogs) > 0 {
 		item := model.Item{
-			ItemId: "19cbe709-2980-4538-9617-9343ba50b7d1",
+			ItemID: "19cbe709-2980-4538-9617-9343ba50b7d1",
 			Title: "Электрочайник Galaxy GL 0101 белый",
 			Desc: "Комплект: полный комплект. Внешний вид: другое. Вид: локальный ремонт. ",
 			Url: "/catalog/markdown/19cbe709-2980-4538-9617-9343ba50b7d1/",
@@ -65,7 +65,7 @@ func TestMarkDownWatcher(t *testing.T) {
 			OldPrice: 0,
 		}
 
-		if catalogs[0].ItemId != item.ItemId {t.Error("ItemId musb be equil")}
+		if catalogs[0].ItemID != item.ItemID {t.Error("ItemId musb be equil")}
 		if catalogs[0].Title != item.Title {t.Error("Title musb be equil")}
 		if catalogs[0].Desc != item.Desc {t.Error("Desc musb be equil")}
 		if catalogs[0].Price != item.Price {t.Error("Price musb be equil")}
