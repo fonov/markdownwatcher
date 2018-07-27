@@ -29,3 +29,11 @@ type JsonObject struct {
 	Result   bool      `json:"result"`
 	Html   string      `json:"html"`
 }
+
+type Config struct {
+	Debug *bool
+	Logger *bool
+	BotToken *string
+	HoursUpdate *[]int
+	DataSource *string
+}

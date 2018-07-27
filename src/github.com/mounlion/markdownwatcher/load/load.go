@@ -10,6 +10,7 @@ import (
 	"github.com/mounlion/markdownwatcher/bot"
 	"github.com/mounlion/markdownwatcher/model"
 	"log"
+	"github.com/mounlion/markdownwatcher/config"
 )
 
 var (
@@ -18,21 +19,16 @@ var (
 		"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
 		"Cookie": "***REMOVED***",
 	}
-	Logger *bool
 )
-
-func SetInitialValue(_Logger *bool)  {
-	Logger = _Logger
-}
 
 func Catalog(lastProductIndex int) string {
 	var html string
 
 	for {
-		if *Logger {log.Printf("Fetch offset %d", lastProductIndex)}
+		if *config.Config.Logger {log.Printf("Fetch offset %d", lastProductIndex)}
 		result, statusCode := fetchCatalog(lastProductIndex)
 		if statusCode != 200 {
-			if *Logger {log.Printf("Fetch failed. Status code: %d", statusCode)}
+			if *config.Config.Logger {log.Printf("Fetch failed. Status code: %d", statusCode)}
 			message := fmt.Sprintf("<b>Обнаружена проблема</b>\n\nСтатус ответа сервера: <code>%d</code>", statusCode)
 			bot.SendServiceMessage(message)
 			break
@@ -41,7 +37,7 @@ func Catalog(lastProductIndex int) string {
 		if result.IsNextLoadAvailable {
 			lastProductIndex = result.LastProductIndex
 		} else {
-			if *Logger {log.Printf("All fetch end")}
+			if *config.Config.Logger {log.Printf("All fetch end")}
 			break
 		}
 	}

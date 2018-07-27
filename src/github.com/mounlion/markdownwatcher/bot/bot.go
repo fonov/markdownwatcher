@@ -6,26 +6,19 @@ import (
 	"gopkg.in/telegram-bot-api.v4"
 	"log"
 	"github.com/mounlion/markdownwatcher/model"
+	"github.com/mounlion/markdownwatcher/config"
 )
 
-const DNSDomain = "https://www.dns-shop.ru"
-var (
-	BotToken *string
-	Logger *bool
-)
+const dnsDomain = "https://www.dns-shop.ru"
 
-func SetInitialValue(_BotToken *string, _Logger *bool)  {
-	BotToken = _BotToken
-	Logger = _Logger
-}
-
+// SendCatalog send newItems and updateItems to users
 func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
-	bot, err := tgbotapi.NewBotAPI(*BotToken)
+	bot, err := tgbotapi.NewBotAPI(*config.Config.BotToken)
 	if err != nil {log.Panic(err)}
 
 	users := database.GetUsers()
 
-	if *Logger {log.Printf("Send Catalog. newItems: %d, updateItems: %d.", len(newItems), len(updateItems))}
+	if *config.Config.Logger {log.Printf("Send Catalog. newItems: %d, updateItems: %d.", len(newItems), len(updateItems))}
 
 	if len(newItems) > 0 || len(updateItems) > 0 {
 
@@ -101,15 +94,16 @@ func sendMessage(bot *tgbotapi.BotAPI, user *model.User, message *string, Disabl
 	}
 }
 
+// Send service message to users admin
 func SendServiceMessage(text string)  {
 	users := database.GetUsers()
 
-	bot, err := tgbotapi.NewBotAPI(*BotToken)
+	bot, err := tgbotapi.NewBotAPI(*config.Config.BotToken)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	if *Logger {log.Printf("Send service message")}
+	if *config.Config.Logger {log.Printf("Send service message")}
 
 	for _, user := range users {
 		if user.IsActive && user.IsAdmin {
@@ -118,10 +112,11 @@ func SendServiceMessage(text string)  {
 	}
 }
 
+// Format catalog message
 func CatalogMessage(item model.Item, OldDiDiscountPrice int)string {
 	var catalog string
 
-	catalog += fmt.Sprintf("<a href=\"%s%s\">%s</a>\n", DNSDomain, item.Url, item.Title)
+	catalog += fmt.Sprintf("<a href=\"%s%s\">%s</a>\n", dnsDomain, item.Url, item.Title)
 	catalog += fmt.Sprintf("<b>%d₽</b>", item.Price)
 	if item.OldPrice != 0 {
 		profit := 100-(float64(item.Price)/float64(item.OldPrice)*100)

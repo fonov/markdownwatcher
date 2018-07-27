@@ -3,9 +3,7 @@ package tests
 import (
 	"testing"
 	"github.com/mounlion/markdownwatcher/bot"
-	"os"
-	"github.com/mounlion/markdownwatcher/database"
-	"github.com/mounlion/markdownwatcher/model"
+			"github.com/mounlion/markdownwatcher/model"
 )
 
 func TestSendMessage(t *testing.T) {
@@ -31,12 +29,10 @@ func TestSendMessage(t *testing.T) {
 		})
 	}
 
-	var BotToken = "***REMOVED***"
-	var DataSourceName = os.Getenv("GOPATH")+"***REMOVED***"
-	var Logger = false
-
-	database.SetInitialValue(&DataSourceName, &Logger)
-	bot.SetInitialValue(&BotToken, &Logger)
-
-	bot.SendCatalog(newItems, updateItems)
+	//var BotToken = "***REMOVED***"
+	//var DataSourceName = os.Getenv("GOPATH")+"***REMOVED***"
+	//var Logger = false
+	//
+	//
+	//bot.SendCatalog(newItems, updateItems)
 }

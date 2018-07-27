@@ -4,6 +4,7 @@ import (
 	"gopkg.in/telegram-bot-api.v4"
 	"log"
 	"github.com/mounlion/markdownwatcher/database"
+	"github.com/mounlion/markdownwatcher/config"
 )
 
 const (
@@ -12,13 +13,14 @@ const (
 	otherwise = "Введена неправильная команда"
 )
 
-func Front(BotToken string) {
-	bot, err := tgbotapi.NewBotAPI(BotToken)
+// Front end of telegram boot process users command
+func Front() {
+	bot, err := tgbotapi.NewBotAPI(*config.Config.BotToken)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	if *Logger {log.Printf("Start bot front. Token: %s", BotToken)}
+	if *config.Config.Logger {log.Printf("Start bot front. Token: %s", *config.Config.BotToken)}
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
