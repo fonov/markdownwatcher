@@ -45,7 +45,7 @@ func Catalog(lastProductIndex int) string {
 	return html
 }
 
-func fetchCatalog (offset int)  (model.JsonObject, int)  {
+func fetchCatalog (offset int)  (model.JSONObject, int)  {
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -58,7 +58,7 @@ func fetchCatalog (offset int)  (model.JsonObject, int)  {
 	defer resp.Body.Close()
 	if err != nil {log.Printf("Http request error")}
 	buf, _ := ioutil.ReadAll(resp.Body)
-	jsonObj := model.JsonObject{}
+	jsonObj := model.JSONObject{}
 	if resp.StatusCode == 200 {
 		json.Unmarshal(buf, &jsonObj)
 		return jsonObj, resp.StatusCode

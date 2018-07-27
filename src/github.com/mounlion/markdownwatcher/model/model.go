@@ -20,14 +20,14 @@ type User struct {
 	IsAdmin bool
 }
 
-type JsonObject struct {
+type JSONObject struct {
 	FiltersOptions   string      `json:"filtersOptions"`
 	IsNextLoadAvailable   bool      `json:"isNextLoadAvailable"`
 	IsNextLoadFinal   bool      `json:"isNextLoadFinal"`
 	LastProductIndex   int      `json:"lastProductIndex"`
 	FilteredProductsCount   int      `json:"filteredProductsCount"`
 	Result   bool      `json:"result"`
-	Html   string      `json:"html"`
+	HTML   string      `json:"html"`
 }
 
 type Config struct {

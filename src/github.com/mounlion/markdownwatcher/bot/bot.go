@@ -86,7 +86,7 @@ func sendMessage(bot *tgbotapi.BotAPI, user *model.User, message *string, Disabl
 	_, err := bot.Send(msg)
 	if err != nil {
 		if err.Error() == "Forbidden: bot was blocked by the user" {
-			database.Subscribe(int(user.ID, false)
+			database.Subscribe(int(user.ID), false)
 		} else {
 			log.Print(err.Error())
 		}
