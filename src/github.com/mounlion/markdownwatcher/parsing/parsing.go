@@ -10,13 +10,13 @@ import (
 	"github.com/mounlion/markdownwatcher/config"
 )
 
-func Catalog(rawHtml string) []model.Item {
+func Catalog(rawHTML string) []model.Item {
 
 	var (
 		typeOfWaitData int
 		Items []model.Item
 		isWaitText = false
-		z = html.NewTokenizer(strings.NewReader(rawHtml))
+		z = html.NewTokenizer(strings.NewReader(rawHTML))
 		tempItem = model.Item{}
 		isWaitTextList bool
 		typeOfWaitListDate int 
