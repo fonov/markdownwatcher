@@ -10,7 +10,7 @@ import (
 "github.com/mounlion/markdownwatcher/config"
 )
 
-const appVersion = 1.2
+const appVersion = 1.3
 
 func main() {
 	config.GetConfig()
