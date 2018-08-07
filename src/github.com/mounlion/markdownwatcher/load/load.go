@@ -33,7 +33,7 @@ func Catalog(lastProductIndex int) string {
 			bot.SendServiceMessage(message)
 			break
 		}
-		html += result.Html
+		html += result.HTML
 		if result.IsNextLoadAvailable {
 			lastProductIndex = result.LastProductIndex
 		} else {
