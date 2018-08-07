@@ -27,7 +27,7 @@ func GetConfig()  {
 	} else {
 		botToken = "***REMOVED***"
 		hoursUpdate = append(hoursUpdate,  8, 10, 12, 14, 17, 19, 22, 23)
-		dataSource = "/home/fonov/markdownwatcher/MarkDownWatcher.prod.db"
+		dataSource = "***REMOVED***"
 	}
 
 	Config.BotToken = &botToken
