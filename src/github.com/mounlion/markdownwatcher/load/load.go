@@ -26,6 +26,7 @@ func Catalog(lastProductIndex int) string {
 
 	for {
 		if *config.Config.Logger {log.Printf("Fetch offset %d", lastProductIndex)}
+		if lastProductIndex > 400 {time.Sleep(time.Second*15)}
 		result, statusCode := fetchCatalog(lastProductIndex)
 		if statusCode != 200 {
 			if *config.Config.Logger {log.Printf("Fetch failed. Status code: %d", statusCode)}

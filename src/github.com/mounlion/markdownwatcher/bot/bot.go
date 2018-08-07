@@ -79,6 +79,8 @@ func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
 }
 
 func sendMessage(bot *tgbotapi.BotAPI, user *model.User, message *string, DisableNotification bool)  {
+	if user.IsActive == false {return}
+
 	msg := tgbotapi.NewMessage(user.ID, *message)
 	msg.ParseMode = "HTML"
 	msg.DisableWebPagePreview = true
@@ -87,6 +89,7 @@ func sendMessage(bot *tgbotapi.BotAPI, user *model.User, message *string, Disabl
 	if err != nil {
 		if err.Error() == "Forbidden: bot was blocked by the user" {
 			database.Subscribe(int(user.ID), false)
+			user.IsActive = false
 		} else {
 			log.Print(err.Error())
 		}

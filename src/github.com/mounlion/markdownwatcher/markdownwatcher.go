@@ -1,16 +1,16 @@
 package main
 
 import (
-"time"
-"github.com/mounlion/markdownwatcher/parsing"
-"github.com/mounlion/markdownwatcher/load"
-"github.com/mounlion/markdownwatcher/database"
-"github.com/mounlion/markdownwatcher/bot"
-"log"
-"github.com/mounlion/markdownwatcher/config"
+	"time"
+	"github.com/mounlion/markdownwatcher/parsing"
+	"github.com/mounlion/markdownwatcher/load"
+	"github.com/mounlion/markdownwatcher/database"
+	"github.com/mounlion/markdownwatcher/bot"
+	"log"
+	"github.com/mounlion/markdownwatcher/config"
 )
 
-const appVersion = 1.5
+const appVersion = 1.2
 
 func main() {
 	config.GetConfig()
