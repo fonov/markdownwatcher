@@ -68,13 +68,6 @@ func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
 				}
 			}
 		}
-	} else {
-		for _, user := range users {
-			if user.IsActive {
-				text := "<b>Новых или обновленных товаров не найдено</b>"
-				sendMessage(bot, &user, &text, true)
-			}
-		}
 	}
 }
 
