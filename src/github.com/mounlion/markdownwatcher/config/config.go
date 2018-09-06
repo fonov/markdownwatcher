@@ -10,6 +10,10 @@ var (
 	hoursUpdate []int
 	botToken string
 	dataSource string
+	cities = map[string]string{
+		"moscow": "Москва",
+		"belgorod": "Белгород",
+	}
 )
 
 func GetConfig()  {
@@ -33,4 +37,5 @@ func GetConfig()  {
 	Config.BotToken = &botToken
 	Config.HoursUpdate = &hoursUpdate
 	Config.DataSource = &dataSource
+	Config.Cities = &cities
 }

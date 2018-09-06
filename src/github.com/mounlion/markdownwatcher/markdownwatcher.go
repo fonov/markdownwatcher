@@ -10,7 +10,7 @@ import (
 	"github.com/mounlion/markdownwatcher/config"
 )
 
-const appVersion = 1.3
+const appVersion = 1.4
 
 func main() {
 	config.GetConfig()
@@ -23,13 +23,27 @@ func main() {
 		now := time.Now()
 		for _, v := range *config.Config.HoursUpdate {
 			if v == now.Hour() {
-				if *config.Config.Logger {log.Printf("Start synchronizations catalog")}
-				html := load.Catalog(0)
-				if len(html) == 0 { break }
-				catalog := parsing.Catalog(html)
-				newItems, updateItems := database.PrepareItems(catalog)
-				bot.SendCatalog(newItems, updateItems)
-				if *config.Config.Logger {log.Printf("Finish synchronizations catalog")}
+				// запускаем цицкл по словарю
+				// получаем название, получаем ключ города
+				for cityKey, cityName := range *config.Config.Cities {
+					// вывводи в консоль какой город начал обрабатываться
+					if *config.Config.Logger {log.Printf("Start synchronizations catalog. [%s]", cityName)}
+					// передаем в каталог ключ города
+					html := load.Catalog(0, cityKey)
+					if len(html) == 0 {
+						if *config.Config.Logger {
+							log.Printf("HTML retutn null")
+							break
+						}
+					}
+					catalog := parsing.Catalog(html)
+					newItems, updateItems := database.PrepareItems(catalog)
+					// передаем в имя города
+					bot.SendCatalog(newItems, updateItems, cityName)
+					// печаем имя города
+					if *config.Config.Logger {log.Printf("Finish synchronizations catalog. [%s]", cityName)}
+				}
+
 				break
 			}
 		}

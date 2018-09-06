@@ -36,4 +36,5 @@ type Config struct {
 	BotToken *string
 	HoursUpdate *[]int
 	DataSource *string
+	Cities *map[string]string
 }

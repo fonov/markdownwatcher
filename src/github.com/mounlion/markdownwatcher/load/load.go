@@ -17,22 +17,33 @@ var (
 	headers = map[string]string{
 		"X-Requested-With": "XMLHttpRequest",
 		"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
-		"Cookie": "***REMOVED***",
 	}
 )
 
-func Catalog(lastProductIndex int) string {
+func Catalog(lastProductIndex int, cityKey string) string {
 	var html string
+
+	countError := 0;
+	countErrorForFailed := 20;
+
+	headers["Cookie"] = getCookei(cityKey);
 
 	for {
 		if *config.Config.Logger {log.Printf("Fetch offset %d", lastProductIndex)}
-		if lastProductIndex > 400 {time.Sleep(time.Second*15)}
 		result, statusCode := fetchCatalog(lastProductIndex)
 		if statusCode != 200 {
-			if *config.Config.Logger {log.Printf("Fetch failed. Status code: %d", statusCode)}
-			message := fmt.Sprintf("<b>Обнаружена проблема</b>\n\nСтатус ответа сервера: <code>%d</code>", statusCode)
-			bot.SendServiceMessage(message)
-			break
+			countError++
+			isFailed := countError > countErrorForFailed;
+			if isFailed {
+				if *config.Config.Logger {log.Printf("Fetch failed. Status code: %d", statusCode)}
+				message := fmt.Sprintf("<b>Обнаружена проблема</b>\n\nСтатус ответа сервера: <code>%d</code>", statusCode)
+				bot.SendServiceMessage(message)
+				break
+			} else {
+				var timeOfSleep time.Duration = 15;
+				if *config.Config.Logger {log.Printf("Fetch failed. Status code: %d. Sleep: %d", statusCode, timeOfSleep)}
+				time.Sleep(time.Second*timeOfSleep)
+			}
 		}
 		html += result.HTML
 		if result.IsNextLoadAvailable {
@@ -67,5 +78,9 @@ func fetchCatalog (offset int)  (model.JSONObject, int)  {
 
 	fmt.Println(string(buf))
 	return jsonObj, resp.StatusCode
+}
+
+func getCookei(cityName string) string {
+	return "***REMOVED***
 }
 

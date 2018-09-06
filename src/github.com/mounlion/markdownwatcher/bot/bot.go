@@ -7,11 +7,12 @@ import (
 	"log"
 	"github.com/mounlion/markdownwatcher/model"
 	"github.com/mounlion/markdownwatcher/config"
+	"time"
 )
 
 const dnsDomain = "https://www.dns-shop.ru"
 
-func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
+func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem, cityName string)  {
 	bot, err := tgbotapi.NewBotAPI(*config.Config.BotToken)
 	if err != nil {log.Panic(err)}
 
@@ -30,7 +31,8 @@ func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
 
 		if len(newItems) > 0 {
 			newItemsStringList = make([]string, 1)
-			newItemsStringList[newItemsLastIndex] += "<b>Новые товары</b>\n\n"
+			// название города
+			newItemsStringList[newItemsLastIndex] += fmt.Sprintf("<b>Новые товары [%s]</b>\n\n", cityName)
 			for _, val := range newItems {
 				if len(newItemsStringList[newItemsLastIndex] + CatalogMessage(val, 0)) > 4096 {
 					newItemsStringList = append(newItemsStringList, CatalogMessage(val, 0))
@@ -43,7 +45,8 @@ func SendCatalog(newItems []model.Item, updateItems []model.UpdateItem)  {
 
 		if len(updateItems) > 0 {
 			updateItemsStringList = make([]string, 1)
-			updateItemsStringList[updateItemsLastIndex] += "<b>Обновление цен</b>\n\n"
+			// название города
+			updateItemsStringList[updateItemsLastIndex] += fmt.Sprintf("<b>Обновление цен [%s]</b>\n\n", cityName)
 			for _, val := range updateItems {
 				if len(updateItemsStringList[updateItemsLastIndex] + CatalogMessage(val.Item, val.OldDiDiscountPrice)) > 4096 {
 					updateItemsStringList = append(updateItemsStringList, CatalogMessage(val.Item, val.OldDiDiscountPrice))
@@ -78,13 +81,17 @@ func sendMessage(bot *tgbotapi.BotAPI, user *model.User, message *string, Disabl
 	msg.ParseMode = "HTML"
 	msg.DisableWebPagePreview = true
 	msg.DisableNotification = DisableNotification
+
 	_, err := bot.Send(msg)
+
+	time.Sleep(time.Second*5)
+
 	if err != nil {
-		if err.Error() == "Forbidden: bot was blocked by the user" {
+		if err.Error() == "Forbidden: bot was blocked by the user" || err.Error() == "Bad Request: chat not found" {
 			database.Subscribe(int(user.ID), false)
 			user.IsActive = false
 		} else {
-			log.Print(err.Error())
+			log.Print("Telegram send mess: "+err.Error())
 		}
 	}
 }
