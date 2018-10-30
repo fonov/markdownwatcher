@@ -30,7 +30,7 @@ func GetConfig()  {
 		dataSource = "***REMOVED***"
 	} else {
 		botToken = "***REMOVED***"
-		hoursUpdate = append(hoursUpdate,  8, 10, 12, 14, 17, 19, 22, 23)
+		hoursUpdate = append(hoursUpdate,  8, 10, 12, 14, 17, 18, 19, 22, 23)
 		dataSource = "***REMOVED***"
 	}
 
