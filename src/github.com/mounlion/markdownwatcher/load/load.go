@@ -61,7 +61,7 @@ func fetchCatalog (offset int)  (model.JSONObject, int)  {
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
-	req, err := http.NewRequest("GET", "https://www.dns-shop.ru/catalogMarkdown/category/update/?offset="+strconv.Itoa(offset), nil)
+	req, err := http.NewRequest("GET", "https://www.dns-shop.ru/catalogMarkdown/markdown/update/?offset="+strconv.Itoa(offset), nil)
 	if err != nil {log.Printf("NewRequest error")}
 	for key, val := range headers {
 		req.Header.Add(key, val)
