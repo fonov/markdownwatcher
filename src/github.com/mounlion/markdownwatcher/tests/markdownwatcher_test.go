@@ -14,8 +14,8 @@ import (
 
 func TestMarkDownWatcher(t *testing.T) {
 	Logger := false
-	DataSourceName := "***REMOVED***"
-	BotToken := "***REMOVED***"
+	DataSourceName := "__DB_PATH__"
+	BotToken := "__BOT_TOKEN"
 
 	parsing.SetInitialValue(&Logger)
 	load.SetInitialValue(&Logger)

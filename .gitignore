@@ -17,3 +17,9 @@
 
 # Dep
 vendor
+
+# Data Base
+MarkDownWatcher.debug.db
+MarkDownWatcher.prod.db
+
+bin

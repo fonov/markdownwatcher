@@ -25,13 +25,13 @@ func GetConfig()  {
 	Config.Logger = Logger
 
 	if *Debug {
-		botToken = "***REMOVED***"
+		botToken = "__BOT_TOKEN__"
 		hoursUpdate = append(hoursUpdate,  9, 11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 0)
-		dataSource = "***REMOVED***"
+		dataSource = "__DB_PATH__"
 	} else {
-		botToken = "***REMOVED***"
+		botToken = "__BOT_TOKEN__"
 		hoursUpdate = append(hoursUpdate,  8, 10, 12, 14, 17, 18, 19, 22, 23)
-		dataSource = "***REMOVED***"
+		dataSource = "__DB_PATH__"
 	}
 
 	Config.BotToken = &botToken
