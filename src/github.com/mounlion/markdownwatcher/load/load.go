@@ -81,6 +81,6 @@ func fetchCatalog (offset int)  (model.JSONObject, int)  {
 }
 
 func getCookei(cityName string) string {
-	return "***REMOVED***
+    return "city_path="+cityName+"; __COOKIE__"
 }
 
