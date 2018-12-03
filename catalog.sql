@@ -1,14 +1,10 @@
--- select id, price from items where id in ("Title")
--- delete from items
--- INSERT OR IGNORE INTO items(id, title, url, description, price, oldPrice) values ('\"qwerty\"', "GPS навигатор DEXP Auriga DS503","/catalog/markdown/be40e256-898c-4480-bea5-fc86fd23b45d/",null,650,2250)
--- UPDATE items set price=1200 where id="12"
--- CREATE TABLE items
--- (
---   id VARCHAR(36) PRIMARY KEY NOT NULL,
---   title VARCHAR(100) NOT NULL,
---   url VARCHAR(50) NOT NULL,
---   description VARCHAR(100),
---   price int NOT NULL,
---   oldPrice int
--- );
--- CREATE UNIQUE INDEX sqlite_autoindex_items ON items (id);
+ CREATE TABLE items
+ (
+   id VARCHAR(36) PRIMARY KEY NOT NULL,
+   title VARCHAR(100) NOT NULL,
+   url VARCHAR(50) NOT NULL,
+   description VARCHAR(100),
+   price int NOT NULL,
+   oldPrice int
+ );
+ CREATE UNIQUE INDEX sqlite_autoindex_items ON items (id);
